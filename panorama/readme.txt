@@ -1,7 +1,7 @@
 === Panorama Viewer- Best Plugin to Display Panoramic Images/Videos ===
 Contributors: abuhayat,bplugins,shehabulislam, freemius
 Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
-Requires at least: 4.3
+Requires at least: 4.4
 Tested up to: 6.6.2
 Stable tag: 1.1.5
 Requires PHP: 7.1
