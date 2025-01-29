@@ -2,8 +2,8 @@
 Contributors: abuhayat,bplugins,shehabulislam, freemius
 Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
 Requires at least: 4.4
-Tested up to: 6.6.2
-Stable tag: 1.1.5
+Tested up to: 6.7.1
+Stable tag: 1.1.6
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -137,6 +137,9 @@ e.g.
 
 == Changelog ==
 
+
+= 1.1.6 - 29 Jan, 2025 =
+* Update: WordPress SDK
 
 = 1.1.5 - 13 Aug, 2024 =
 * Update: WordPress SDK
