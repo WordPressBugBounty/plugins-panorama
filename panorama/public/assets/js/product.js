@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const panoramas = document.querySelectorAll("#bppiv_product_panorama");
 
-  console.log(panoramas);
 
   panoramas.forEach((container) => {
     // get elements
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { image_src, initialView, autoRotate, title, author, showControls, video_src, type, video360, video_show_controls, video_autoplay, video_mute, video_loop } = settings;
     container.removeAttribute("data-settings");
 
-    console.log({ container, initialView });
     if (type === "video" && Boolean(parseInt(video360))) {
       const videoeSource = video_src || [];
 

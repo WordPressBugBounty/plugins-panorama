@@ -1,9 +1,9 @@
 === Panorama Viewer- Best Plugin to Display Panoramic Images/Videos ===
-Contributors: abuhayat,bplugins,shehabulislam, freemius
+Contributors: abuhayat, bplugins, shehabulislam, shamim10, freemius
 Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
-Requires at least: 4.4
-Tested up to: 6.7.1
-Stable tag: 1.1.6
+Requires at least: 4.3
+Tested up to: 6.7
+Stable tag: 1.2.0
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -55,16 +55,24 @@ With these advanced features, you can create immersive and interactive experienc
 
 ### Pro Features
 
-* Display the Gallery, Tour 360°, and Google Street View
-* Choose Custom Angle of View for Initial Viewing
-* Show/Hide custom control
-* Enable/Disable auto load to load the image without clicking
-* Enable or Disable mouse and touch dragging
-* Show/Hide the Compass
-* Display the Title and Author name
+* Supports Image 3D, Image 360°, Video, Video 360°, Gallery, Tour 360°, and Google Street Viewer.
+* Auto Rotate with inactivity delay for smooth viewing experiences.
+* Set an Initial View to define the perfect starting angle.
+* Add and customize your own navigation controls for the panorama viewer.
+* Enable/Disable fullscreen mode for videos and 360° panoramas.
+* Picture-in-Picture and Playback Speed Control for video viewers.
+* Show/Hide Title and Author with customizable text options.
+* Manage and sort gallery items with image and video support.
+* Customizable column layout, spacing, and gallery item limits.
+* Draggable, Mouse Zoom, and Compass support for better navigation.
+* Disable Keyboard Control and Double Click Zoom for refined interactions.
+* Google Street Viewer with Panorama ID and interactive controls.
+* Tour 360° with hotspots, ID-based navigation, and default data control.
+* Load More button customization for an optimized gallery experience.
+* Smooth, user-friendly controls for an immersive media experience.
+
 
 ### Who Should Use Panorama Viewer Plugin?
-
 
 * Stores
 * Schools
@@ -102,8 +110,6 @@ Follow the steps below to embed a panoramic image.
 4. Copy Generated ShortCode (See below the Panorama title ) and paste it where you like to embed the Panorama Viewer.
 
 
-
-
 = ⭐ Checkout our other WordPress Plugins- = 
 
 🔥 **[Html5 Audio Player](https://audioplayerwp.com/)** – Best audio player plugin for WordPress.
@@ -130,16 +136,24 @@ e.g.
 
 == Screenshots ==
 
-1. Sidebar menu
-2. UI
+1. Gutenberg block
+2. Sidebar menu
 3. Configuration & Shortcode Generator
-4. Demo
+4. Image 3D
+5. Image 360°
+6. Video
+7. Video 360°
+8. Gallery
 
 == Changelog ==
 
 
-= 1.1.6 - 29 Jan, 2025 =
+= 1.2.0 - 13 April, 2025 =
+* Added: 7 blocks have been registered for the WordPress Gutenberg block editor.
+
+= 1.1.6 - 25 Nov, 2024 =
 * Update: WordPress SDK
+* Initial view for video
 
 = 1.1.5 - 13 Aug, 2024 =
 * Update: WordPress SDK

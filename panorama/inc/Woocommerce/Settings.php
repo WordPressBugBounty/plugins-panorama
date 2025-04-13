@@ -19,7 +19,7 @@ class Settings{
             'framework_title' => __("Woocommerce Settings", 'panorama-viewer'),
             'menu_position' => 10,
             'footer'      => false,
-            'footer_credit'  => 'bPlugins LLC',
+            'footer_credit'  => 'bPlugins',
             'footer_text'    => '',
         ) );
         
@@ -113,7 +113,7 @@ class Settings{
           array(
             'id'       => 'control_show_hide',
             'type'     => 'switcher',
-            'title'    => __('Hide Default Control ?', 'panorama-viewer'),
+            'title'    => __('Show/Hide Default Control ?', 'panorama-viewer'),
             'subtitle' => __('Show / Hide Switch for Default Control.', 'panorama-viewer'),
             'desc'     => __('Show or Hide Control', 'panorama-viewer'),
             'text_on'  => 'Yes',

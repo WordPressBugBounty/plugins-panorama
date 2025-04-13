@@ -60,7 +60,6 @@ class registerPostType{
     
     function bppiv_columns_content_only_panorama( $column_name, $post_ID ){
         if ( $column_name == 'directors_name' ) {
-            // show content of 'directors_name' column
             echo  '<input onClick="this.select();" value="[panorama id=' . esc_attr($post_ID) . ']" >' ;
         }
     }
@@ -68,7 +67,34 @@ class registerPostType{
     function bppiv_shortcode_area(){
         global  $post ;
         if ( $post->post_type == 'bppiv-image-viewer' ) {
-            ?>	
+
+            define('bpl_meta_fields', [
+                'id' => '_bppivimages_',
+                'title' => 'Fieds',
+                'sections' => [
+                    [
+                        'name' => 'first',
+                        'title' => 'First Section',
+                        'fields' => [
+                            array(
+                                'id' => 'bppiv_type',
+                                'title' => 'Text',
+                                'field' => 'text',
+                                'attributes'=>array(
+                                    'style'=>array('width'=>'50%')
+                                )
+                            ),
+                        ]
+                    ]
+                ]
+            ]);
+
+            wp_enqueue_style('bppiv-meta');
+            wp_enqueue_script('bppiv-meta');
+
+            ?>
+            <div id='bpl_meta_fields'   data-options='<?php echo esc_attr( wp_json_encode( bpl_meta_fields ) ); ?>'
+             data-nonce='<?php echo esc_attr( wp_create_nonce( 'bpl_settings_data' ) ); ?>'></div>
             <div class="shortcode_gen">
                 <label for="bppiv_shortcode"><?php 
                 esc_html_e( 'Copy this shortcode and paste it into your post, page, or text widget content', 'panorama-viewer' );

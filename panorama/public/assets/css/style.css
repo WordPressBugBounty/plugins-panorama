@@ -2,9 +2,25 @@
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 4px;
+  width: 100%;
+  height: 100%;
+  gap: 10px;
+  .photo {
+    width: auto;
+    min-width: 317px;
+    background: #ccc;
+    background-size: cover;
+    height: 200px;
+    border-radius: 3px;
+    overflow: hidden
+  }
 }
 
-.title {
+.bppiv_panorama {
+  position: relative;
+}
+
+.bppiv_panorama .title {
   width: 100%;
   height: 80px;
   line-height: 80px;
@@ -20,11 +36,12 @@
   height: 100%;
   top: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: white;
   transform: scale(0, 0);
   opacity: 0;
   -webkit-transition: all 0.5s ease-out;
   transition: all 0.5s ease-out;
+  z-index: 999;
 }
 
 #panorama-container.open {
@@ -56,29 +73,44 @@
   transition: opacity 0.5s ease;
 }
 
-.close {
+.bppiv_panorama .close {
   width: 44px;
   height: 44px;
   position: absolute;
-  right: 0;
-  margin: 20px;
+  right: 11%;
+  margin-top: 50px;
   cursor: pointer;
 }
 
-.close > i {
+.bppiv_panorama .close > i {
   color: #fff;
   font-size: 44px;
 }
+.bppiv_panorama .close .close-icon {
+  color: #fff;
+  font-size: 40px;
+  margin-top: 45px;
+  svg{
+    background-color: rgb(53, 18, 53);
+    border-radius: 50%;
+    padding: 10px;
+  }
+}
 
 #bppiv-main-container {
-  width: 100%;
+  width: 79%;
   height: 80%;
+  margin: 0 auto;
   align-self: center;
   background-color: #000;
+  .panolens-canvas{
+    width: 1516px !important;
+  }
 }
 
 /* LoadMore Button */
 .pan_loadMore {
+  border: none;
   width: 200px;
   display: flex;
   justify-content: center;
@@ -119,29 +151,46 @@
   width: 600px;
   height: 400px;
 }
-#controls {
-  position: absolute;
-  bottom: 0;
-  z-index: 2;
-  text-align: center;
-  width: 100%;
-  padding-bottom: 3px;
-}
-.ctrl {
-  padding: 8px 5px;
-  width: 30px;
-  text-align: center;
-  background: rgba(200, 200, 200, 0.8);
-  display: inline-block;
-  cursor: pointer;
-}
-.ctrl svg {
-  fill: #555;
-}
-.ctrl:hover {
-  background: rgba(200, 200, 200, 1);
-}
-/* Panorama css */
+
 .pnlm-about-msg {
   display: none !important;
 }
+.bppiv_panorama_video2 {
+  max-width: 100%;
+  position: relative;
+}
+.bppiv_panorama_video2 video {
+  max-width: 100%;
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .bppiv_panorama .close {
+    right: 1%;
+    margin-top: 140px;
+  }
+  #bppiv-main-container {
+    width: 100%;
+    height: 50%;
+    .panolens-canvas{
+      width: 100% !important;
+    }
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .bppiv_panorama .close {
+    right: 2%;
+    margin-top: 140px;
+  }
+  #bppiv-main-container {
+    width: 100%;
+    height: 50%;
+    .panolens-canvas{
+      width: 100% !important;
+    }
+  }
+}
+
+
+

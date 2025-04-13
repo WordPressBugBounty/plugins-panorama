@@ -179,12 +179,7 @@
   margin-top: 0;
   font-weight: 400;
 }
-/* .bplugins-features .col:first-child {
-  margin-left: 0;
-}
-.bplugins-features .col:last-child {
-  margin-right: 0;
-} */
+
 .row [class^="col"] {
   margin: 0.5rem 1%;
 }
@@ -440,13 +435,7 @@
   max-width: 11px;
 }
 
-#wpfooter {
-  /* position: relative; */
-}
-
 .panorama-readonly {
-  /* opacity: 0.95; */
-  /* filter: blur(0.8px); */
   z-index: 9999;
   font-style: normal;
 }
