@@ -1,14 +1,6 @@
-<?php if ( ! defined( 'ABSPATH' )  ) { die; } // Cannot access directly.
+<?php if ( ! defined( 'ABSPATH' )  ) { die; } 
 
-//
-// Metabox of the PAGE
-// Set a unique slug-like ID
-//
 $prefix = '_bppivimages_';
-
-//
-// Create a metabox
-//
 
 CSF::createMetabox( $prefix, array(
   'title'        => 'Panorama Settings',
@@ -17,19 +9,14 @@ CSF::createMetabox( $prefix, array(
   'footer_credit'    => ' ',
 ) );
 
-//
-// section: Panorama
-//
 CSF::createSection( $prefix, array(
   'fields' => array(
-
-    // panorama controls
     array(
       'id'       => 'bppiv_type',
       'type'     => 'button_set',
-      'title'    => __('Panorama Type.', 'panorama-viewer'),
-      'subtitle' => __('Choose Panorama Type', 'panorama-viewer'),
-      'desc'     => __('Select Panorama, Default- Image.', 'panorama-viewer'),
+      'title'    => 'Panorama Type.',
+      'subtitle' => 'Choose Panorama Type',
+      'desc'     => 'Select Panorama, Default- Image.',
       'multiple' => false,
       'options'  => array(
         'image'   => 'Image 3D',
@@ -42,46 +29,42 @@ CSF::createSection( $prefix, array(
       ),
       'default'  => 'image'
     ),
-
     array(
       'id'           => 'bppiv_image_src',
       'type'         => 'media',
       'library'      => 'image',
-      'button_title' => __('Upload Image', 'panorama-viewer'),
-      'title'        => __('Image Source.', 'panorama-viewer'),
-      'desc'         => __('To create an image panorama, Panoramic image is Recommended is Recommended.', 'panorama-viewer'),
+      'button_title' => 'Upload Image',
+      'title'        => 'Image Source.',
+      'desc'         => 'To create an image panorama, Panoramic image is Recommended is Recommended.',
       'dependency'   => array( 'bppiv_type', '==', 'image' ),
     ),
     array(
       'id'           => 'image_src_360',
       'type'         => 'upload',
       'library'      => 'image',
-      'button_title' => __('Upload Image', 'panorama-viewer'),
-      'title'        => __('360° Image Source.', 'panorama-viewer'),
-      'desc'         => __('To create an image panorama, Panoramic image is Recommended. You can also use external Panoramic Image link here.', 'panorama-viewer'),
+      'button_title' => 'Upload Image',
+      'title'        => '360° Image Source.',
+      'desc'         => 'To create an image panorama, Panoramic image is Recommended. You can also use external Panoramic Image link here.',
       'dependency'   => array( 'bppiv_type', '==', 'image360' ),
 
     ),
-    // video source
     array(
       'id'           => 'bppiv_video_src',
       'type'         => 'media',
       'library'      => 'video',
-      'button_title' => __('Upload Video', 'panorama-viewer'),
-      'title'        => __('Video Source.', 'panorama-viewer'),
-      'desc'         => __('Upload Panoramic Video', 'panorama-viewer'),
+      'button_title' => 'Upload Video',
+      'title'        => 'Video Source.',
+      'desc'         => 'Upload Panoramic Video',
       'dependency'   => array( 'bppiv_type', 'any', 'video,video2' ),
     ),
-
-    // Gallery
     array(
       'id'           => 'bppiv_pan_gallery',
       'type'         => 'group',
       'library'      => 'video',
-      'button_title' => __('Add New Gallery Item', 'panorama-viewer'),
-      'title'        => __('Panorama Gallery.', 'panorama-viewer'),
-      'subtitle'     => __('Show multiple items according to your need .', 'panorama-viewer'),
-      'desc'         => __('Create Panorama Gallery, Supports panoramic image and Video Both', 'panorama-viewer'),
+      'button_title' => 'Add New Gallery Item',
+      'title'        => 'Panorama Gallery.',
+      'subtitle'     => 'Show multiple items according to your need .',
+      'desc'         => 'Create Panorama Gallery, Supports panoramic image and Video Both',
       'fields'    => array(
         array(
           'id'    => 'panoramic_img',
@@ -94,13 +77,13 @@ CSF::createSection( $prefix, array(
           'type'  => 'checkbox',
           'title' => 'Set Video',
           'default' => true,
-          'desc'    => __('If you want to Set Video for this item please checked it', 'panorama-viewer'),
+          'desc'    => 'If you want to Set Video for this item please checked it',
         ),
         array(
           'id'    => 'gal_type_video',
           'type'  => 'media',
           'title' => 'Gallery Video',
-          'desc'  => __('Upload Panoramic Video', 'panorama-viewer'),
+          'desc'  => 'Upload Panoramic Video',
           'library' => 'video',
           'dependency'   => array( 'gal_type_cheek', '==', '1' ),
         ),
@@ -111,9 +94,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'           => 'bppiv_gallery_limit',
       'type'         => 'spinner',
-      'title'        => __('Gallery Limits', 'panorama-viewer'),
-      'subtitle'     => __('Number of items to show in primary gallery', 'panorama-viewer'),
-      'desc'         => __('How much item do you want to show ?', 'panorama-viewer'),
+      'title'        => 'Gallery Limits',
+      'subtitle'     => 'Number of items to show in primary gallery',
+      'desc'         => 'How much item do you want to show ?',
       'default'  => 6,
       'class'     => 'panorama-readonly',  
       'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
@@ -121,8 +104,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'           => 'bppiv_gallery_column',
       'type'         => 'spinner',
-      'title'        => __('Number of Columns', 'panorama-viewer'),
-      'desc'         => __('Number of Columns in Gallery Items', 'panorama-viewer'),
+      'title'        => 'Number of Columns',
+      'desc'         => 'Number of Columns in Gallery Items',
       'default'  => 2,
        'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
@@ -130,8 +113,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'           => 'bppiv_gallery_column_gap',
       'type'         => 'dimensions',
-      'title'        => __('Spacing Between Columns', 'panorama-viewer'),
-      'desc'         => __('Spacing Between Columns of Gallery Items', 'panorama-viewer'),
+      'title'        => 'Spacing Between Columns',
+      'desc'         => 'Spacing Between Columns of Gallery Items',
       'default'      => array(
           'width'  => '10',
           'unit'   => 'px', 
@@ -142,14 +125,13 @@ CSF::createSection( $prefix, array(
       'choices'      => array(
           'units' => array('px'),
       ),
-  ),
-    // Load More Button
+    ),
     array(
       'id'         => 'loadMore_btn_text',
       'type'       => 'text',
-      'title'      => __('LoadMore Button Text', 'bgallery'),
-      'subtitle'   => __('You can use Custom Text in Button', 'bgallery'),
-      'desc'       => __('Input LoadMore Button Text', 'bgallery'),
+      'title'      => 'LoadMore Button Text',
+      'subtitle'   => 'You can use Custom Text in Button',
+      'desc'       => 'Input LoadMore Button Text',
       'default'    => 'Load More',
       'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
@@ -157,9 +139,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'         => 'loadMore_text_color',
       'type'       => 'color',
-      'title'      => __('LoadMore Text Color', 'bgallery'),
-      'subtitle'   => __('You can use Custom Color', 'bgallery'),
-      'desc'       => __('Choose LoadMore Button Text Color', 'bgallery'),
+      'title'      => 'LoadMore Text Color',
+      'subtitle'   => 'You can use Custom Color',
+      'desc'       => 'Choose LoadMore Button Text Color',
       'default'    => '#fff',
       'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
@@ -167,8 +149,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'         => 'loadMore_btn_bg',
       'type'       => 'color',
-      'title'      => __('LoadMore Button Background', 'bgallery'),
-      'desc'       => __('Choose LoadMore Button Background Color', 'bgallery'),
+      'title'      => 'LoadMore Button Background',
+      'desc'       => 'Choose LoadMore Button Background Color',
       'default'    => '#000',
       'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
@@ -176,125 +158,122 @@ CSF::createSection( $prefix, array(
     array(
       'id'         => 'loadMore_hover_bg',
       'type'       => 'color',
-      'title'      => __('LoadMore Hover Background', 'bgallery'),
-      'desc'       => __('Choose LoadMore Hover Background Color', 'bgallery'),
+      'title'      => 'LoadMore Hover Background',
+      'desc'       => 'Choose LoadMore Hover Background Color',
       'default'    => '#222',
       'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
     ),
-    // Tour Fields
-  array(
-    'id'        => 'tour_360',
-    'type'      => 'group',
-    'title'     => 'Tour 360°',
-    'subtitle'  => 'Multiple panoramas can be joined together into a virtual tour using this tour feature.',
-    'class'     => 'panorama-readonly', 
-    'fields'    => array(
-      array(
-        'id'    => 'tour_id',
-        'type'  => 'text',
-        'title'    => __('Tour ID', 'panorama-viewer'),
-        'subtitle'    => __('Use Tour Unique ID. For example: house, house123.', 'panorama-viewer'),
-        'desc'    => __('Input Your Unique ID here. Don\'t use space !!', 'panorama-viewer'),
-        'default' => 'house'
-      ),
-      array(
-        'id'    => 'tour_img',
-        'type'  => 'upload',
-        'library'      => 'image',
-        'title'  => __('Tour Image', 'panorama-viewer'),
-        'subtitle'=>__('Use Tour Image', 'panorama-viewer'),
-        'desc'    =>__('Upload Your Tour Image or Use External Image Link', 'panorama-viewer'),
-      ),
-      // Title Author
-      array(
-        'id'       => 'tourTitleAuthor',
-        'type'     => 'switcher',
-        'title'    => __('Title & Author ', 'panorama-viewer'),
-        'subtitle' => __('Show or Hide Title and Author.', 'panorama-viewer'),
-        'desc'     => __('Choose Show or Hide. Default is "Show"', 'panorama-viewer'),
-        'text_on'   => 'Show',
-        'text_off'  => 'Hide',
-        'text_width' => 70,
-        'default'  => true,
-      ),
-      array(
-        'id'    => 'title',
-        'type'  => 'text',
-        'title'  => __('Title', 'panorama-viewer'),
-        'subtitle'=> __('Use Tour Title', 'panorama-viewer'),
-        'desc'    => __('Input Your Tour Title here.', 'panorama-viewer'),
-        'default' => 'Spring House or Dairy',
-        'dependency'   => array( 'tourTitleAuthor', '==', '1' )
-      ),
-      array(
-        'id'    => 'author',
-        'type'  => 'text',
-        'title'  => __('Author', 'panorama-viewer'),
-        'subtitle'=> __('Use Tour Author/Location Name', 'panorama-viewer'),
-        'desc'    => __('Input Tour Author/Location Name here.', 'panorama-viewer'),
-        'default' => 'bPlugins',
-        'dependency'   => array( 'tourTitleAuthor', '==', '1' )
-      ),
+    array(
+      'id'        => 'tour_360',
+      'type'      => 'group',
+      'title'     => 'Tour 360°',
+      'subtitle'  => 'Multiple panoramas can be joined together into a virtual tour using this tour feature.',
+      'class'     => 'panorama-readonly', 
+      'fields'    => array(
+        array(
+          'id'    => 'tour_id',
+          'type'  => 'text',
+          'title'    => 'Tour ID',
+          'subtitle'    => 'Use Tour Unique ID. For example: house, house123.',
+          'desc'    => 'Input Your Unique ID here. Don\'t use space !!',
+          'default' => 'house'
+        ),
+        array(
+          'id'    => 'tour_img',
+          'type'  => 'upload',
+          'library'      => 'image',
+          'title'  => 'Tour Image',
+          'subtitle'=>'Use Tour Image',
+          'desc'    =>'Upload Your Tour Image or Use External Image Link',
+        ),
+        // Title Author
+        array(
+          'id'       => 'tourTitleAuthor',
+          'type'     => 'switcher',
+          'title'    => 'Title & Author ',
+          'subtitle' => 'Show or Hide Title and Author.',
+          'desc'     => 'Choose Show or Hide. Default is "Show"',
+          'text_on'   => 'Show',
+          'text_off'  => 'Hide',
+          'text_width' => 70,
+          'default'  => true,
+        ),
+        array(
+          'id'    => 'title',
+          'type'  => 'text',
+          'title'  => 'Title',
+          'subtitle'=> 'Use Tour Title',
+          'desc'    => 'Input Your Tour Title here.',
+          'default' => 'Spring House or Dairy',
+          'dependency'   => array( 'tourTitleAuthor', '==', '1' )
+        ),
+        array(
+          'id'    => 'author',
+          'type'  => 'text',
+          'title'  => 'Author',
+          'subtitle'=> 'Use Tour Author/Location Name',
+          'desc'    => 'Input Tour Author/Location Name here.',
+          'default' => 'bPlugins',
+          'dependency'   => array( 'tourTitleAuthor', '==', '1' )
+        ),
 
-      // hotspot
-      array(
-        'id'       => 'tour_hotSpot',
-        'type'     => 'switcher',
-        'title'    => __('HotSpot ', 'panorama-viewer'),
-        'subtitle' => __('Choose HotSpot Option. OFF or ON ', 'panorama-viewer'),
-        'desc'     => __('OFF or ON HotSpot. Default "ON"', 'panorama-viewer'),
-        'text_on'   => 'ON',
-        'text_off'  => 'OFF',
-        'default'  => true,
+        // hotspot
+        array(
+          'id'       => 'tour_hotSpot',
+          'type'     => 'switcher',
+          'title'    => 'HotSpot ',
+          'subtitle' => 'Choose HotSpot Option. OFF or ON ',
+          'desc'     => 'OFF or ON HotSpot. Default "ON"',
+          'text_on'   => 'ON',
+          'text_off'  => 'OFF',
+          'default'  => true,
+        ),
+        array(
+          'id'    => 'hotSpot_txt',
+          'type'  => 'text',
+          'title'  => 'HotSpot Text',
+          'subtitle'=>'Use HotSpot Text That will display during mouse hover',
+          'desc'    =>'Input Your HotSpot Text Here',
+          'default' => 'Spring House',
+          'dependency'   => array( 'tour_hotSpot', '==', '1' ),
+        ),
+        array(
+          'id'    => 'target_id',
+          'type'  => 'text',
+          'title'  => 'Target ID',
+          'subtitle'=>'Use Targeted ID That will create HotSpot relation between two Scene / Tour Image',
+          'desc'    =>'Input Targeted Tour name here. Tour name will work like ID',
+          'dependency'   => array( 'tour_hotSpot', '==', '1' )
+        ),
+        array(
+          'id'    => 'default_data',
+          'type'  => 'switcher',
+          'title'  => 'Default',
+          'subtitle'=>'Set as default to display Primary Scene',
+          'desc'    =>'Choose Yes to set as default Scene. If you don\'t Choose automatically will Display first Item',
+          'text_on'   => 'Yes',
+          'text_off'  => 'No',
+          'default'  => false,
+        ),
       ),
-      array(
-        'id'    => 'hotSpot_txt',
-        'type'  => 'text',
-        'title'  => __('HotSpot Text', 'panorama-viewer'),
-        'subtitle'=>__('Use HotSpot Text That will display during mouse hover', 'panorama-viewer'),
-        'desc'    =>__('Input Your HotSpot Text Here', 'panorama-viewer'),
-        'default' => 'Spring House',
-        'dependency'   => array( 'tour_hotSpot', '==', '1' ),
-      ),
-      array(
-        'id'    => 'target_id',
-        'type'  => 'text',
-        'title'  => __('Target ID', 'panorama-viewer'),
-        'subtitle'=>__('Use Targeted ID That will create HotSpot relation between two Scene / Tour Image', 'panorama-viewer'),
-        'desc'    =>__('Input Targeted Tour name here. Tour name will work like ID', 'panorama-viewer'),
-        'dependency'   => array( 'tour_hotSpot', '==', '1' )
-      ),
-      array(
-        'id'    => 'default_data',
-        'type'  => 'switcher',
-        'title'  => __('Default', 'panorama-viewer'),
-        'subtitle'=>__('Set as default to display Primary Scene', 'panorama-viewer'),
-        'desc'    =>__('Choose Yes to set as default Scene. If you don\'t Choose automatically will Display first Item', 'panorama-viewer'),
-        'text_on'   => 'Yes',
-        'text_off'  => 'No',
-        'default'  => false,
-      ),
-    ),
-    'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
-  ),
-    // Google Street View 
+      'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
+    ), 
     array(
       'id'           => 'bppiv_pano_id',
       'type'         => 'text',
-      'title'        => __('Panorama ID', 'panorama-viewer'),
-      'desc'         => __('Input here Google Street View Panorama Id <a href="https://e4youth.org/blog/2019/02/05/snapping-360-images-from-google-street-view/" target="_blank">Click here for Panorama ID Details</a>', 'panorama-viewer'),
+      'title'        => 'Panorama ID',
+      'desc'         => 'Input here Google Street View Panorama Id <a href="https://e4youth.org/blog/2019/02/05/snapping-360-images-from-google-street-view/" target="_blank">Click here for Panorama ID Details</a>',
       'placeholder'  => 'Paste here panorama id',
       'default'      => 'JmSoPsBPhqWvaBmOqfFzgA',
       'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', '==', 'gstreet' ),
     ),
-    // Image and Videos Fields
     array(
       'id'           => 'bppiv_image_width',
       'type'         => 'dimensions',
-      'title'        => __('Width', 'panorama-viewer'),
-      'desc'         => __('Panorama Viewer Width', 'panorama-viewer'),
+      'title'        => 'Width',
+      'desc'         => 'Panorama Viewer Width',
       'default'  => array(
         'width'  => '100',
         'unit'   => '%',
@@ -305,8 +284,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'           => 'bppiv_image_height',
       'type'         => 'dimensions',
-      'title'        => __('Height', 'panorama-viewer'),
-      'desc'         => __('Panorama Viewer height', 'panorama-viewer'),
+      'title'        => 'Height',
+      'desc'         => 'Panorama Viewer height',
       'units'        => ['px', 'em', 'pt'],
       'default'  => array(
         'height' => '320',
@@ -318,13 +297,13 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_alignment',
       'type'     => 'select',
-      'title'    => __('Viewer Alignment', 'panorama-viewer'),
-      'subtitle' => __('Choose the alignment of the viewer.', 'panorama-viewer'),
-      'desc'     => __('Set the viewer alignment: Left, Right, or Center.', 'panorama-viewer'),
+      'title'    => 'Viewer Alignment',
+      'subtitle' => 'Choose the alignment of the viewer.',
+      'desc'     => 'Set the viewer alignment: Left, Right, or Center.',
       'options'  => array(
-        'start'   => __('Left', 'panorama-viewer'),
-        'center' => __('Center', 'panorama-viewer'),
-        'end'  => __('Right', 'panorama-viewer'),
+        'start'   => 'Left',
+        'center' => 'Center',
+        'end'  => 'Right',
       ),
       'default'  => 'center',
       'dependency'   => array( 'bppiv_type', '!=', 'gallery'  ),
@@ -332,8 +311,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_auto_rotate',
       'type'     => 'switcher',
-      'title'    => __('Auto Rotate ?', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable Auto Rotate', 'panorama-viewer'),
+      'title'    => 'Auto Rotate ?',
+      'desc'     => 'Enable or Disable Auto Rotate',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => true,
@@ -342,18 +321,18 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_speed',
       'type'     => 'spinner',
-      'title'    => __('Auto Rotate Speed', 'panorama-viewer'),
-      'subtitle' => __('Choose Auto Rotate Speed', 'panorama-viewer'),
-      'desc'     => __('Auto rotate speed as in degree per second. Positive is counter-clockwise and negative is clockwise.', 'panorama-viewer'), 
+      'title'    => 'Auto Rotate Speed',
+      'subtitle' => 'Choose Auto Rotate Speed',
+      'desc'     => 'Auto rotate speed as in degree per second. Positive is counter-clockwise and negative is clockwise.', 
       'default'  => 2.0,
       'dependency' => array( 'bppiv_type|bppiv_auto_rotate', 'any|==', 'image,image360,tour360,gstreet|true' ),
     ),
     array(
       'id'       => 'auto_rotate_inactivity_delay',
       'type'     => 'spinner',
-      'title'    => __('Auto Rotate Inactivity Delay', 'panorama-viewer'),
-      'subtitle' => __('Choose Auto Rotate Inactivity Delay', 'panorama-viewer'),
-      'desc'     => __('Delay before auto-rotation starts after inactivity (in milliseconds).', 'panorama-viewer'), 
+      'title'    => 'Auto Rotate Inactivity Delay',
+      'subtitle' => 'Choose Auto Rotate Inactivity Delay',
+      'desc'     => 'Delay before auto-rotation starts after inactivity (in milliseconds).', 
       'default'  => 3000,
       'step'     => 1000, 
       'min'      => 1000,
@@ -364,9 +343,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'control_show_hide',
       'type'     => 'switcher',
-      'title'    => __('Hide Default Control ?', 'panorama-viewer'),
-      'subtitle' => __('Hide Switch for Default Control.', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Control', 'panorama-viewer'),
+      'title'    => 'Hide Default Control ?',
+      'subtitle' => 'Hide Switch for Default Control.',
+      'desc'     => 'Show or Hide Control',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
@@ -375,9 +354,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'initial_view',
       'type'     => 'switcher',
-      'title'    => __('Initial View', 'panorama-viewer'),
-      'subtitle' => __('Choose Custom Angle of View for Initial Viewing ', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable Initial Viewe. Default "OFF"', 'panorama-viewer'),
+      'title'    => 'Initial View',
+      'subtitle' => 'Choose Custom Angle of View for Initial Viewing ',
+      'desc'     => 'Enable or Disable Initial Viewe. Default "OFF"',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
@@ -388,8 +367,8 @@ CSF::createSection( $prefix, array(
       'id'    => 'initial_view_property',
       'type'  => 'spacing',
       'title' => 'Initial Values',
-      'subtitle'=> __('Set The Custom values for Initial View. Default Initial Values are ("X=2.3 Y=-360.4 Z=120")', 'model-viewer'),
-      'desc'    => __('Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ', 'model-viewer'),
+      'subtitle'=> 'Set The Custom values for Initial View. Default Initial Values are ("X=2.3 Y=-360.4 Z=120")',
+      'desc'    => 'Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ',
       'class'     => 'panorama-readonly',
       'default'  => array(
         'top'    => 2.3,
@@ -410,8 +389,8 @@ CSF::createSection( $prefix, array(
       'id'    => 'initial_view_image_property',
       'type'  => 'spacing',
       'title' => 'Initial Values',
-      'subtitle'=> __('Set The Custom values for Initial View. Default Initial Values are ("X=-61.42 Y=-8.95 Z=120")', 'model-viewer'),
-      'desc'    => __('Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ', 'model-viewer'),
+      'subtitle'=> 'Set The Custom values for Initial View. Default Initial Values are ("X=-61.42 Y=-8.95 Z=120")',
+      'desc'    => 'Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ',
       'default'  => array(
         'top'    => -61.42,
         'right'  => -8.95,
@@ -431,9 +410,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'initial_view_video',
       'type'     => 'switcher',
-      'title'    => __('Initial View', 'panorama-viewer'),
-      'subtitle' => __('Choose Custom Angle of View for Initial Viewing ', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable Initial Viewe. Default "OFF"', 'panorama-viewer'),
+      'title'    => 'Initial View',
+      'subtitle' => 'Choose Custom Angle of View for Initial Viewing ',
+      'desc'     => 'Enable or Disable Initial Viewe. Default "OFF"',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
@@ -444,8 +423,8 @@ CSF::createSection( $prefix, array(
       'id'    => 'initial_view_video_property',
       'type'  => 'spacing',
       'title' => 'Initial Values',
-      'subtitle'=> __('Set The Custom values for Initial View. Default Initial Values are ("X=0 Y=0 Z=120")', 'model-viewer'),
-      'desc'    => __('Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ', 'model-viewer'),
+      'subtitle'=> 'Set The Custom values for Initial View. Default Initial Values are ("X=0 Y=0 Z=120")',
+      'desc'    => 'Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ',
       'default'  => array(
         'top'    => 0,
         'right'  => 0,
@@ -462,22 +441,21 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'custom_control',
       'type'     => 'switcher',
-      'title'    => __('Custom Control', 'panorama-viewer'),
-      'subtitle' => __('Custom Control will replace default control bar', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Custom Control. Default "NO"', 'panorama-viewer'),
+      'title'    => 'Custom Control',
+      'subtitle' => 'Custom Control will replace default control bar',
+      'desc'     => 'Show or Hide Custom Control. Default "NO"',
       'class'     => 'panorama-readonly',  
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
       'dependency'   => array( 'bppiv_type', '==', 'image360' ),
     ),
-     // device motion button field start
      array(
       'id'       => 'is_motion_button',
       'type'     => 'switcher',
-      'title'    => __('Device Motion Button', 'panorama-viewer'),
-      'subtitle' => __('Disable or Enable Device Motion Button', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Custom Control. Default "NO"', 'panorama-viewer'),
+      'title'    => 'Device Motion Button',
+      'subtitle' => 'Disable or Enable Device Motion Button',
+      'desc'     => 'Show or Hide Custom Control. Default "NO"',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
@@ -487,44 +465,43 @@ CSF::createSection( $prefix, array(
      array(
       'id'         => 'motion_button_text_color',
       'type'       => 'color',
-      'title'      => __('Device Motion Button Text Color', 'bgallery'),
-      'subtitle'   => __('You can use Custom Color', 'bgallery'),
-      'desc'       => __('Choose Device Motion  Button Text Color', 'bgallery'),
+      'title'      => 'Device Motion Button Text Color',
+      'subtitle'   => 'You can use Custom Color',
+      'desc'       => 'Choose Device Motion  Button Text Color',
       'default'    => '#fff',
       'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
     ),
     array(
       'id'         => 'motion_button_btn_bg',
       'type'       => 'color',
-      'title'      => __('Device Motion Button Background Color', 'bgallery'),
-      'desc'       => __('Choose Device Motion Button Background Color', 'bgallery'),
+      'title'      => 'Device Motion Button Background Color',
+      'desc'       => 'Choose Device Motion Button Background Color',
       'default'    => '#000000B3',
      'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
     ),
     array(
       'id'         => 'hover_motion_button_text_color',
       'type'       => 'color',
-      'title'      => __('Device Motion Button Text Hover Color', 'bgallery'),
-      'subtitle'   => __('You can use Custom Color', 'bgallery'),
-      'desc'       => __('Choose Device Motion  Button Text Hover Color', 'bgallery'),
+      'title'      => 'Device Motion Button Text Hover Color',
+      'subtitle'   => 'You can use Custom Color',
+      'desc'       => 'Choose Device Motion  Button Text Hover Color',
       'default'    => '#fff',
       'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
     ),
     array(
       'id'         => 'hover_motion_button_btn_bg',
       'type'       => 'color',
-      'title'      => __('Device Motion Button Background Hover Color', 'bgallery'),
-      'desc'       => __('Choose Device Motion Button Background Hover Color', 'bgallery'),
+      'title'      => 'Device Motion Button Background Hover Color',
+      'desc'       => 'Choose Device Motion Button Background Hover Color',
       'default'    => '#000000E6',
       'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
     ),
-    // device motion button field end
     array(
       'id'       => 'bppiv_auto_load',
       'type'     => 'switcher',
-      'title'    => __('Auto Load', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable Autoload', 'panorama-viewer'),
-      'subtitle'     => __('Image will be automatically load without click', 'panorama-viewer'),
+      'title'    => 'Auto Load',
+      'desc'     => 'Enable or Disable Autoload',
+      'subtitle'     => 'Image will be automatically load without click',
       'class'     => 'panorama-readonly',  
       'text_on'  => 'Yes',
       'text_off' => 'No',
@@ -534,9 +511,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'draggable_360',
       'type'     => 'switcher',
-      'title'    => __('Draggable ', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable mouse and touch dragging', 'panorama-viewer'),
-      'subtitle'     => __('Image will be Draggable with this feature', 'panorama-viewer'),
+      'title'    => 'Draggable ',
+      'desc'     => 'Enable or Disable mouse and touch dragging',
+      'subtitle'     => 'Image will be Draggable with this feature',
       'class'     => 'panorama-readonly',  
       'text_on'  => 'Yes',
       'text_off' => 'No',
@@ -546,42 +523,51 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'compass_360',
       'type'     => 'switcher',
-      'title'    => __('Compass ', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Compass.', 'panorama-viewer'),
-      'subtitle' => __('Enable or Disable Compass. Default "No"', 'panorama-viewer'),
+      'title'    => 'Compass ',
+      'desc'     => 'Show or Hide Compass.',
+      'subtitle' => 'Enable or Disable Compass. Default "No"',
       'class'     => 'panorama-readonly',  
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
       'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
     ),
-    // Video Settings
     array(
       'id'       => 'bppiv_auto_play',
       'type'     => 'switcher',
-      'title'    => __('Auto Play ?', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable Auto Play', 'panorama-viewer'),
+      'title'    => 'Auto Play ?',
+      'desc'     => 'To enable autoplay, please make sure "Muted" is also turned on.',
       'text_on'  => 'Yes',
       'text_off' => 'No',
-      'default'  => true,
+      'default'  => false,
       'dependency'   => array( 'bppiv_type', '==', 'video' ),
     ),
     array(
       'id'       => 'bppiv_video_mute',
       'type'     => 'switcher',
-      'title'    => __('Video Mute ?', 'panorama-viewer'),
-      'subtitle' => __('Enable or Disable Video Mute', 'panorama-viewer'),
-      'desc'     => __('Specify if the video should auto play', 'panorama-viewer'),
+      'title'    => 'Video Mute ?',
+      'subtitle' => 'Enable or Disable Video Mute',
+      'desc'     => 'Specify if the video should auto play',
+      'text_on'  => 'Yes',
+      'text_off' => 'No',
+      'default'  => false,
+      'dependency'   => array( 'bppiv_type', '==', 'video' ),
+    ),
+    array(
+      'id'       => 'bppiv_video_autoplay',
+      'type'     => 'switcher',
+      'title'    => 'Video Auto Play',
+      'desc'     => 'Enable or Disable Video Auto Play',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => true,
-      'dependency'   => array( 'bppiv_type', '==', 'video' ),
+      'dependency'   => array( 'bppiv_type', '==', 'video2' ),
     ),
     array(
       'id'       => 'bppiv_video_loop',
       'type'     => 'switcher',
-      'title'    => __('Video Loop ?', 'panorama-viewer'),
-      'desc'     => __('Enable or Disable Video Loop', 'panorama-viewer'),
+      'title'    => 'Video Loop ?',
+      'desc'     => 'Enable or Disable Video Loop',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => true,
@@ -590,9 +576,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'control_show_hide_video',
       'type'     => 'switcher',
-      'title'    => __('Control Bar', 'panorama-viewer'),
-      'desc'     => __('Choose "No" to Hide Control. Default "Yes"', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Control', 'panorama-viewer'),
+      'title'    => 'Control Bar',
+      'desc'     => 'Choose "No" to Hide Control. Default "Yes"',
+      'desc'     => 'Show or Hide Control',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => true,
@@ -601,8 +587,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video_fullscreen_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Fullscreen Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Fullscreene Control', 'panorama-viewer'),
+      'title'    => 'Fullscreen Control',
+      'desc'     => 'Show or Hide Fullscreene Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => true,
@@ -612,12 +598,11 @@ CSF::createSection( $prefix, array(
         array('bppiv_type', '==', 'video')
       ),
     ),
-     // video field 
      array(
       'id'       => 'video_setting_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Setting Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Setting Control', 'panorama-viewer'),
+      'title'    => 'Setting Control',
+      'desc'     => 'Show or Hide Setting Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => true,
@@ -627,20 +612,19 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video_video_range_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Video Range & Play/Pause Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Video Range & Play/Pause Control', 'panorama-viewer'),
+      'title'    => 'Video Range & Play/Pause Control',
+      'desc'     => 'Show or Hide Video Range & Play/Pause Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => true,
       'class'     => 'panorama-readonly', 
       'dependency'   => array( array('control_show_hide_video', '==', '1') ,array('bppiv_type', '==', 'video') ),
     ),
-    // video2 field
     array(
       'id'       => 'video_play_pause_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Video  Play/Pause Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Video Play/Pause Control', 'panorama-viewer'),
+      'title'    => 'Video  Play/Pause Control',
+      'desc'     => 'Show or Hide Video Play/Pause Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => true,
@@ -651,8 +635,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video_progress_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Progress Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Progress Control', 'panorama-viewer'),
+      'title'    => 'Progress Control',
+      'desc'     => 'Show or Hide Progress Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => true,
@@ -664,8 +648,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video_volume_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Volume Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Volume Control', 'panorama-viewer'),
+      'title'    => 'Volume Control',
+      'desc'     => 'Show or Hide Volume Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => true,
@@ -676,8 +660,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video2_fullscreen_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Fullscreen Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Fullscreene Control', 'panorama-viewer'),
+      'title'    => 'Fullscreen Control',
+      'desc'     => 'Show or Hide Fullscreene Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => false,
@@ -689,8 +673,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video_remaining_time_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Remaining Time Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Remaining Time Control', 'panorama-viewer'),
+      'title'    => 'Remaining Time Control',
+      'desc'     => 'Show or Hide Remaining Time Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => false,
@@ -699,12 +683,11 @@ CSF::createSection( $prefix, array(
         array('bppiv_type', '==', 'video2') 
       ),
     ),
-   
     array(
       'id'       => 'video_pip_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Picture in Picture Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Picture in Picture Control', 'panorama-viewer'),
+      'title'    => 'Picture in Picture Control',
+      'desc'     => 'Show or Hide Picture in Picture Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => false,
@@ -716,8 +699,8 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'video_playback_speed_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Playback Speed Control', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Playback Speed Control', 'panorama-viewer'),
+      'title'    => 'Playback Speed Control',
+      'desc'     => 'Show or Hide Playback Speed Control',
       'text_on'  => 'Yes',
       'text_off' => 'No', 
       'default'  => false,
@@ -729,9 +712,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'title_author',
       'type'     => 'switcher',
-      'title'    => __('Title & Author', 'panorama-viewer'),
-      'subtitle' => __('Display Title & Author Text. Default "No"', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Title, Author Name', 'panorama-viewer'),
+      'title'    => 'Title & Author',
+      'subtitle' => 'Display Title & Author Text. Default "No"',
+      'desc'     => 'Show or Hide Title, Author Name',
       'class'     => 'panorama-readonly',  
       'text_on'  => 'Yes',
       'text_off' => 'No',
@@ -741,9 +724,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'title_360',
       'type'     => 'text',
-      'title'    => __('Title', 'panorama-viewer'),
-      'subtitle' => __('Display Title Text.', 'panorama-viewer'),
-      'desc'     => __('Input Title Text', 'panorama-viewer'),
+      'title'    => 'Title',
+      'subtitle' => 'Display Title Text.',
+      'desc'     => 'Input Title Text',
       'class'     => 'panorama-readonly',  
       'placeholder' => "360° Image",
       'default' => "360° Panorama",
@@ -752,9 +735,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'author_360',
       'type'     => 'text',
-      'title'    => __('Author', 'panorama-viewer'),
-      'subtitle' => __('Display Author Name."', 'panorama-viewer'),
-      'desc'     => __('Input Author Name', 'panorama-viewer'),
+      'title'    => 'Author',
+      'subtitle' => 'Display Author Name."',
+      'desc'     => 'Input Author Name',
       'placeholder' => "bPlugins",
       'default' => '<a href="https://bplugins.com/">bPlugins</a>',
       'class'     => 'panorama-readonly',  
@@ -763,9 +746,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'mouse_zoom',
       'type'     => 'switcher',
-      'title'    => __('Mouse Zoom', 'panorama-viewer'),
-      'subtitle' => __('Disable/Enable Mouse Zoom. Default "Yes"', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Mouse Zoom', 'panorama-viewer'),
+      'title'    => 'Mouse Zoom',
+      'subtitle' => 'Disable/Enable Mouse Zoom. Default "Yes"',
+      'desc'     => 'Show or Hide Mouse Zoom',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => true,
@@ -775,9 +758,9 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'disable_keyboard_ctrl',
       'type'     => 'switcher',
-      'title'    => __('Disable Keyboard Control', 'panorama-viewer'),
-      'subtitle' => __('Disable/Enable Keyboard Control. Default "No"', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Keyboard Control', 'panorama-viewer'),
+      'title'    => 'Disable Keyboard Control',
+      'subtitle' => 'Disable/Enable Keyboard Control. Default "No"',
+      'desc'     => 'Show or Hide Keyboard Control',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => false,
@@ -787,19 +770,16 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'double_click_zoom',
       'type'     => 'switcher',
-      'title'    => __('Double Click Zoom', 'panorama-viewer'),
-      'subtitle' => __('Disable/Enable Double Click Zoom. Default "Yes"', 'panorama-viewer'),
-      'desc'     => __('Show or Hide Double Click Zoom', 'panorama-viewer'),
+      'title'    => 'Double Click Zoom',
+      'subtitle' => 'Disable/Enable Double Click Zoom. Default "Yes"',
+      'desc'     => 'Show or Hide Double Click Zoom',
       'text_on'  => 'Yes',
       'text_off' => 'No',
       'default'  => true,
       'class'     => 'panorama-readonly', 
       'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
     ),
-
-) // End fields
-
-
+  )
 ) );
 
 

@@ -19,8 +19,8 @@
     "options": {
       "type": "object",
       "default": {
-        "autoplay": true,
-        "muted": true,
+        "autoplay": false,
+        "muted": false,
         "loop": true,
         "controlBar": true,
         "fullscreen": true,

@@ -92,13 +92,14 @@ function bppiv_dashboard_page_callback(){
                         </div>
                         <div class="video">
                             <?php echo renderTemplate('<!-- wp:panorama/video {
-                                "videoUrl":"'.$video.'"
-                            } /-->'); ?>
+                            "videoUrl":"'.$video.'",
+                            "options":{"autoplay":false,"muted":false,"loop":true,"controlBar":true,"fullscreen":true,"setting":true,"video":true,"initialView":false,"initialPosition":{"x":0,"y":0,"z":120}}} /-->'); ?>
                         </div>
                         <div class="video-360">
                             <?php echo renderTemplate('<!-- wp:panorama/video-360 {
                                 "videoUrl":"'.$video.'",
                                 "options":{
+                                    "autoplay": true,
                                     "loop": true,
                                     "play": true,
                                     "progress": true,

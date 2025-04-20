@@ -12,7 +12,8 @@
     background-size: cover;
     height: 200px;
     border-radius: 3px;
-    overflow: hidden
+    overflow: hidden;
+    cursor: pointer;
   }
 }
 

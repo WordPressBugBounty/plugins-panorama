@@ -78,9 +78,7 @@ class Init{
         }
         return false;
     }
-
     
-
     private static function instantiate($class){
         if(class_exists($class)){
             return new $class();

@@ -3,7 +3,7 @@ Contributors: abuhayat, bplugins, shehabulislam, shamim10, freemius
 Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
 Requires at least: 4.3
 Tested up to: 6.7
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -147,6 +147,9 @@ e.g.
 
 == Changelog ==
 
+
+= 1.2.1 - 20 April, 2025 =
+* Fixed text-domain issue.
 
 = 1.2.0 - 13 April, 2025 =
 * Added: 7 blocks have been registered for the WordPress Gutenberg block editor.

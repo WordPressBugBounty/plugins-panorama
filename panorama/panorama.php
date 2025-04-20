@@ -4,7 +4,7 @@
  * Plugin Name: Panorama
  * Description: A lite Weight Plugin that helps you, Easily display panoramic 360 degree images / videos into WordPress Website in Post, Page, Widget Area using shortCode. 
  * Plugin URI:  https://wordpress.org/plugins/
- * Version:    1.2.0
+ * Version:    1.2.1
  * Author: bPlugins
  * Author URI: http://abuhayatpolash.com
  * License: GPLv3
@@ -59,7 +59,7 @@ if ( function_exists( 'panorama_fs' ) ) {
     // ... Your plugin's main file logic ...
     /* Plugin Initialization */
     define( 'BPPIV_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
-    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.2.0' ) );
+    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.2.1' ) );
     defined( 'BPPIV_PATH' ) or define( 'BPPIV_PATH', plugin_dir_path( __FILE__ ) );
     defined( 'BPPIV__FILE__' ) or define( 'BPPIV__FILE__', __FILE__ );
     add_action( 'plugin_loaded', 'bppiv_textdomain' );
@@ -117,12 +117,6 @@ if ( function_exists( 'panorama_fs' ) ) {
 
     function demoEnqueueScripts(  $screen  ) {
         if ( $screen == 'bppiv-image-viewer_page_bppiv-support' ) {
-            wp_enqueue_style(
-                'ppiv-demo',
-                BPPIV_PLUGIN_DIR . 'build/demo.css',
-                [],
-                BPPIV_VERSION
-            );
             wp_enqueue_script(
                 'ppiv-demo',
                 BPPIV_PLUGIN_DIR . 'build/demo.js',
@@ -134,7 +128,25 @@ if ( function_exists( 'panorama_fs' ) ) {
                 ],
                 BPPIV_VERSION
             );
+            wp_enqueue_style(
+                'ppiv-demo',
+                BPPIV_PLUGIN_DIR . 'build/demo.css',
+                [],
+                BPPIV_VERSION
+            );
         }
+        wp_enqueue_script(
+            'ppiv-shortCodeAsset-js',
+            BPPIV_PLUGIN_DIR . 'build/shortCodeAsset.js',
+            [],
+            BPPIV_VERSION
+        );
+        wp_enqueue_style(
+            'ppiv-shortCodeAsset-css',
+            BPPIV_PLUGIN_DIR . 'build/shortCodeAsset.css',
+            [],
+            BPPIV_VERSION
+        );
     }
 
     //  FRAMEWORK + OTHER INCLUDES
@@ -154,19 +166,6 @@ if ( function_exists( 'panorama_fs' ) ) {
         }
     }
 
-    // After activation redirect
-    function bppiv_plugin_activate() {
-        add_option( 'bppiv_plugin_do_activation_redirect', true );
-    }
-
-    register_activation_hook( __FILE__, 'bppiv_plugin_activate' );
-    function bppiv_plugin_redirect() {
-        if ( get_option( 'bppiv_plugin_do_activation_redirect', false ) ) {
-            delete_option( 'bppiv_plugin_do_activation_redirect' );
-        }
-    }
-
-    add_action( 'admin_init', 'bppiv_plugin_redirect' );
     // get values from csf
     function bppiv_isset(  $array  ) {
         return function (

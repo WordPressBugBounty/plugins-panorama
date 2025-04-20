@@ -5,6 +5,7 @@ $block = [
     "attrs" => [
         "videoUrl" =>$get_value('bppiv_video_src', false, 0, 'url'),
         "options" => [
+            "autoplay" => $get_value('bppiv_video_autoplay', true, true),
             "loop" => $get_value('bppiv_video_loop', true, true),
             "play" => $get_value('video_play_pause_ctrl', true, true),
             "progress" => $get_value('video_progress_ctrl', true, true),

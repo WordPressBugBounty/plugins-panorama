@@ -5,6 +5,7 @@ class registerPostType{
 
     public function register(){
         add_action( 'init', [$this, 'init']);
+        add_shortcode('panorama', [$this, 'bppiv_shortcode']);
         add_filter( 'manage_bppiv-image-viewer_posts_columns', [$this, 'bppiv_columns_head_only_panorama'], 10 );
         add_action( 'manage_bppiv-image-viewer_posts_custom_column', [$this, 'bppiv_columns_content_only_panorama'], 10, 2);
         add_action( 'edit_form_after_title', [$this, 'bppiv_shortcode_area'] );
@@ -52,64 +53,199 @@ class registerPostType{
         \register_post_type( 'bppiv-image-viewer', $args );
     }
 
+    function bppiv_shortcode($atts){
+        $post_id = $atts['id'];
+        $post = get_post( $post_id );
+
+        if ( !$post ) {
+            return '';
+        }
+
+        if ( post_password_required( $post ) ) {
+            return get_the_password_form( $post );
+        }
+
+        switch ( $post->post_status ) {
+            case 'publish':
+                return $this->displayContent( $post );
+                
+            case 'private':
+                if (current_user_can('read_private_posts')) {
+                    return $this->displayContent( $post );
+                }
+                return '';
+                
+            case 'draft':
+            case 'pending':
+            case 'future':
+                if ( current_user_can( 'edit_post', $post_id ) ) {
+                    return $this->displayContent( $post );
+                }
+                return '';
+                
+            default:
+                return '';
+        }
+    }
+    
+    function displayContent( $post ){
+        $blocks = parse_blocks( $post->post_content );
+        return render_block( $blocks[0] );
+    }
+
     // CREATE TWO FUNCTIONS TO HANDLE THE COLUMN
     function bppiv_columns_head_only_panorama( $defaults ){
+        unset($defaults['date']);
         $defaults['directors_name'] = 'ShortCode';
+        $defaults['date'] = 'Date';
         return $defaults;
     }
     
     function bppiv_columns_content_only_panorama( $column_name, $post_ID ){
-        if ( $column_name == 'directors_name' ) {
-            echo  '<input onClick="this.select();" value="[panorama id=' . esc_attr($post_ID) . ']" >' ;
+        if ($column_name == 'directors_name') {
+            echo '<div class="bPlAdminShortcode" id="bPlAdminShortcode-' . esc_attr($post_ID) . '">
+                    <input value="[panorama id=' . esc_attr($post_ID) . ']" onclick="copyBPlAdminShortcode(\'' . esc_attr($post_ID) . '\')" readonly>
+                    <span class="tooltip">Copy To Clipboard</span>
+                  </div>';
         }
     }
 
-    function bppiv_shortcode_area(){
-        global  $post ;
-        if ( $post->post_type == 'bppiv-image-viewer' ) {
+   
 
-            define('bpl_meta_fields', [
-                'id' => '_bppivimages_',
-                'title' => 'Fieds',
-                'sections' => [
-                    [
-                        'name' => 'first',
-                        'title' => 'First Section',
-                        'fields' => [
-                            array(
-                                'id' => 'bppiv_type',
-                                'title' => 'Text',
-                                'field' => 'text',
-                                'attributes'=>array(
-                                    'style'=>array('width'=>'50%')
-                                )
-                            ),
-                        ]
+ 
+
+function bppiv_shortcode_area() {
+    global $post;
+    
+    if ( $post->post_type == 'bppiv-image-viewer' ) {
+
+        define('bpl_meta_fields', [
+            'id' => '_bppivimages_',
+            'title' => 'Fieds',
+            'sections' => [
+                [
+                    'name' => 'first',
+                    'title' => 'First Section',
+                    'fields' => [
+                        [
+                            'id' => 'bppiv_type',
+                            'title' => 'Text',
+                            'field' => 'text',
+                            'attributes' => [
+                                'style' => ['width' => '50%']
+                            ]
+                        ],
                     ]
                 ]
-            ]);
+            ]
+        ]);
 
-            wp_enqueue_style('bppiv-meta');
-            wp_enqueue_script('bppiv-meta');
+        wp_enqueue_style('bppiv-meta');
+        wp_enqueue_script('bppiv-meta');
 
-            ?>
-            <div id='bpl_meta_fields'   data-options='<?php echo esc_attr( wp_json_encode( bpl_meta_fields ) ); ?>'
-             data-nonce='<?php echo esc_attr( wp_create_nonce( 'bpl_settings_data' ) ); ?>'></div>
-            <div class="shortcode_gen">
-                <label for="bppiv_shortcode"><?php 
-                esc_html_e( 'Copy this shortcode and paste it into your post, page, or text widget content', 'panorama-viewer' );
-                ?>:</label>
+        ?>
+        <style>
+            .shortcode_gen {
+                margin-top: 20px;
+                font-family: sans-serif;
+            }
 
-                <span>
-                    <input type="text" id="bppiv_shortcode" onfocus="this.select();" readonly="readonly"  value="[panorama id=<?php 
-                echo  $post->ID ;
-                ?>]" /> 		
-                </span>
+            .shortcode_gen label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                font-size: 14px;
+            }
 
+            .shortcode_input_wrapper {
+                position: relative;
+                display: inline-block;
+            }
+
+            #bppiv_shortcode {
+                width: 300px;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+                cursor: pointer;
+                display: block;
+                text-align: center;
+                background: #4527a4;
+                color:#fff;
+                transition: border-color 0.3s ease;
+            }
+
+            #bppiv_shortcode:hover {
+                border-color: #007cba;
+            }
+
+            .copied-message {
+                position: absolute;
+                top: -25px;
+                left: 0;
+                background: #007cba;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                opacity: 0;
+                transition: opacity 0.3s ease, top 0.3s ease;
+                pointer-events: none;
+            }
+
+            .copied-message.show {
+                opacity: 1;
+                top: -35px;
+            }
+        </style>
+
+        <div class="shortcode_gen">
+            <label for="bppiv_shortcode">
+                <?php esc_html_e( 'Copy this shortcode and paste it into your post, page, or text widget content', 'panorama-viewer' ); ?>
+            </label>
+
+            <div class="shortcode_input_wrapper" onclick="copyShortcode()">
+                <div id="copiedMsg" class="copied-message">Copied!</div>
+                <input
+                    type="text"
+                    id="bppiv_shortcode"
+                    onfocus="this.select();"
+                    readonly="readonly"
+                    value="[panorama id=<?php echo esc_attr( $post->ID ); ?>]"
+                />
             </div>
-	        <?php 
-        }
+        </div>
+
+        <script>
+            function copyShortcode() {
+                const input = document.getElementById('bppiv_shortcode');
+                const msg = document.getElementById('copiedMsg');
+                input.select();
+                input.setSelectionRange(0, 99999);
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(input.value).then(() => {
+                        msg.classList.add("show");
+                        setTimeout(() => msg.classList.remove("show"), 1500);
+                    });
+                } else {
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            msg.classList.add("show");
+                            setTimeout(() => msg.classList.remove("show"), 1500);
+                        }
+                    } catch (err) {
+                        console.error("Copy failed", err);
+                    }
+                }
+            }
+        </script>
+        <?php
     }
+}
+
 
        /*-------------------------------------------------------------------------------*/
     /* Footer Review Request .
