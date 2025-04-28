@@ -11,7 +11,14 @@ class Init{
     private function __construct() {
 		add_action( 'init', [ $this, 'i18n' ] );
         add_action('woocommerce_after_register_post_type', [$this, 'load_woocommerce_files']);
+        add_action('init', [$this, 'init']);
+        add_action('plugins_loaded', [$this, 'plugins_loaded']);
 	}
+    public function plugins_loaded(){
+        require_once BPPIV_PATH.'inc/Base/registerPostType.php';
+        $instance = new Base\registerPostType();
+        $instance->register();
+    }
 
     public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -27,7 +34,7 @@ class Init{
    
     public static function get_services(){
         return [
-            Base\registerPostType::class,
+            // Base\registerPostType::class,
             Woocommerce\ProductView::class,
             // Woocommerce\Settings::class,
             Base\EnqueueAssets::class,
