@@ -90,6 +90,9 @@ class registerPostType{
     
     function displayContent( $post ){
         $blocks = parse_blocks( $post->post_content );
+        if (empty($blocks)) {
+            return '';
+        }
         return render_block( $blocks[0] );
     }
 
