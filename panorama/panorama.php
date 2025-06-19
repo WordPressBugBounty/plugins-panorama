@@ -4,14 +4,13 @@
  * Plugin Name: Panorama
  * Description: A lite Weight Plugin that helps you, Easily display panoramic 360 degree images / videos into WordPress Website in Post, Page, Widget Area using shortCode. 
  * Plugin URI:  https://wordpress.org/plugins/
- * Version:    1.2.3
+ * Version:    1.3.0
  * Author: bPlugins
  * Author URI: http://abuhayatpolash.com
  * License: GPLv3
  * Text Domain: panorama-viewer
  * Domain Path:  /languages
  */
-// Security check
 if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -57,9 +56,8 @@ if ( function_exists( 'panorama_fs' ) ) {
         do_action( 'panorama_fs_loaded' );
     }
     // ... Your plugin's main file logic ...
-    /* Plugin Initialization */
     define( 'BPPIV_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
-    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.2.3' ) );
+    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.3.0' ) );
     defined( 'BPPIV_PATH' ) or define( 'BPPIV_PATH', plugin_dir_path( __FILE__ ) );
     defined( 'BPPIV__FILE__' ) or define( 'BPPIV__FILE__', __FILE__ );
     add_action( 'plugin_loaded', 'bppiv_textdomain' );
@@ -69,6 +67,7 @@ if ( function_exists( 'panorama_fs' ) ) {
 
     add_action( 'init', 'onInit' );
     function onInit() {
+        flush_rewrite_rules();
         register_block_type( __DIR__ . '/build/blocks/parent' );
         register_block_type( __DIR__ . '/build/blocks/image-360' );
         register_block_type( __DIR__ . '/build/blocks/image-3d' );
@@ -78,6 +77,7 @@ if ( function_exists( 'panorama_fs' ) ) {
         register_block_type( __DIR__ . '/build/blocks/gallery' );
         register_block_type( __DIR__ . '/build/blocks/tour' );
         register_block_type( __DIR__ . '/build/blocks/gutenberg-block' );
+        register_block_type( __DIR__ . '/build/blocks/virtual' );
     }
 
     add_action( 'wp_ajax_panoramaPremiumChecker', 'panoramaPremiumChecker' );

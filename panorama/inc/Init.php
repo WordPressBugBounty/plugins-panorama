@@ -21,7 +21,7 @@
  		return self::$instance;
  	}
  
-     public function i18n() {
+    public function i18n() {
  		load_plugin_textdomain('model-viewer',false,dirname( plugin_basename( BPPIV__FILE__ ) ) . '/languages/');
  	}
  

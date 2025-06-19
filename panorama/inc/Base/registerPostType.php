@@ -6,8 +6,11 @@ class registerPostType{
     public function register(){
         add_action( 'init', [$this, 'init']);
         add_shortcode('panorama', [$this, 'bppiv_shortcode']);
+        add_shortcode('virtual-tour', [$this, 'bppiv_virtual_tour_shortcode']);
         add_filter( 'manage_bppiv-image-viewer_posts_columns', [$this, 'bppiv_columns_head_only_panorama'], 10 );
         add_action( 'manage_bppiv-image-viewer_posts_custom_column', [$this, 'bppiv_columns_content_only_panorama'], 10, 2);
+        add_filter( 'manage_virtual_tour_posts_columns', [$this, 'bppiv_columns_head_only_virtual_tour'], 10 );
+        add_action( 'manage_virtual_tour_posts_custom_column', [$this, 'bppiv_columns_content_only_virtual_tour'], 10, 2);
         add_action( 'edit_form_after_title', [$this, 'bppiv_shortcode_area'] );
         add_filter( 'admin_footer_text', [$this, 'bppiv_admin_footer'] );
         add_filter( 'gettext', [$this, 'bppiv_change_publish_button'], 10, 2 );
@@ -32,7 +35,6 @@ class registerPostType{
             'all_items'      => __( 'All Panoramas', 'panorama-viewer' ),
             'not_found'      => __( 'Sorry, we couldn\'t find the Feed you are looking for.' ),
         );
-
         $args = array(
             'labels'          => $labels,
             'description'     => __( 'Panorama Options.', 'panorama-viewer' ),
@@ -44,13 +46,73 @@ class registerPostType{
             'rewrite'         => array(
             'slug' => 'panorama-viewer',
         ),
-            'capability_type' => 'post',
-            'has_archive'     => false,
-            'hierarchical'    => false,
-            'menu_position'   => 20,
-            'supports'        => array( 'title' ),
+        'capability_type' => 'post',
+        'has_archive'     => false,
+        'hierarchical'    => false,
+        'menu_position'   => 20,
+        'supports'        => array( 'title' ),
         );
         \register_post_type( 'bppiv-image-viewer', $args );
+
+        if (panorama_fs()->can_use_premium_code()) {
+            register_post_type('virtual_tour', [
+                'labels' => [
+                    'name' => '360° Virtual Tour',
+                    'singular_name' => 'Virtual Tour',
+                    'add_new' => 'Add New',
+                    'add_new_item' => 'Add New Tour',
+                    'edit_item' => 'Edit Tour',
+                    'not_found' => 'There was no tour please add one',
+                    'search_items' => 'Search Tour',
+                    'view_item' => 'View Tour',
+                    'not_found_in_trash' => 'No Tour found in trash',
+                    'item_updated' => 'Tour updated',
+                ],
+                'public' => true,
+                'has_archive' => true,
+                "show_in_rest" => true,
+                "template_lock" => "all",
+                "template" => [["panorama/virtual-tour"]],
+                'show_in_menu' => 'edit.php?post_type=bppiv-image-viewer', 
+            ]);
+        }
+       
+
+    }
+
+    function bppiv_virtual_tour_shortcode($atts){
+        $post_id = $atts['id'];
+        $post = get_post( $post_id );
+
+        if ( !$post ) {
+            return '';
+        }
+
+        if ( post_password_required( $post ) ) {
+            return get_the_password_form( $post );
+        }
+
+        switch ( $post->post_status ) {
+            case 'publish':
+                return $this->displayContent( $post );
+                
+            case 'private':
+                if (current_user_can('read_private_posts')) {
+                    return $this->displayContent( $post );
+                }
+                return '';
+                
+            case 'draft':
+            case 'pending':
+            case 'future':
+                if ( current_user_can( 'edit_post', $post_id ) ) {
+                    return $this->displayContent( $post );
+                }
+                return '';
+                
+            default:
+                return '';
+        }
     }
 
     function bppiv_shortcode($atts){
@@ -96,14 +158,13 @@ class registerPostType{
         return render_block( $blocks[0] );
     }
 
-    // CREATE TWO FUNCTIONS TO HANDLE THE COLUMN
     function bppiv_columns_head_only_panorama( $defaults ){
         unset($defaults['date']);
         $defaults['directors_name'] = 'ShortCode';
         $defaults['date'] = 'Date';
         return $defaults;
     }
-    
+
     function bppiv_columns_content_only_panorama( $column_name, $post_ID ){
         if ($column_name == 'directors_name') {
             echo '<div class="bPlAdminShortcode" id="bPlAdminShortcode-' . esc_attr($post_ID) . '">
@@ -113,144 +174,155 @@ class registerPostType{
         }
     }
 
-   
+    function bppiv_columns_head_only_virtual_tour( $defaults ){
+        unset($defaults['date']);
+        $defaults['shortcode'] = 'ShortCode';
+        $defaults['date'] = 'Date';
+        return $defaults;
+    }
 
- 
+    function bppiv_columns_content_only_virtual_tour( $column_name, $post_ID ){
+        if ($column_name == 'shortcode') {
+            echo '<div class="bPlAdminShortcode" id="bPlAdminShortcode-' . esc_attr($post_ID) . '">
+                    <input value="[virtual-tour id=' . esc_attr($post_ID) . ']" onclick="copyBPlAdminShortcode(\'' . esc_attr($post_ID) . '\')" readonly>
+                    <span class="tooltip">Copy To Clipboard</span>
+                  </div>';
+        }
+    }
 
-function bppiv_shortcode_area() {
-    global $post;
-    
-    if ( $post->post_type == 'bppiv-image-viewer' ) {
+    function bppiv_shortcode_area() {
+        global $post;
+        
+        if ( $post->post_type == 'bppiv-image-viewer' ) {
 
-        define('bpl_meta_fields', [
-            'id' => '_bppivimages_',
-            'title' => 'Fieds',
-            'sections' => [
-                [
-                    'name' => 'first',
-                    'title' => 'First Section',
-                    'fields' => [
-                        [
-                            'id' => 'bppiv_type',
-                            'title' => 'Text',
-                            'field' => 'text',
-                            'attributes' => [
-                                'style' => ['width' => '50%']
-                            ]
-                        ],
+            define('bpl_meta_fields', [
+                'id' => '_bppivimages_',
+                'title' => 'Fieds',
+                'sections' => [
+                    [
+                        'name' => 'first',
+                        'title' => 'First Section',
+                        'fields' => [
+                            [
+                                'id' => 'bppiv_type',
+                                'title' => 'Text',
+                                'field' => 'text',
+                                'attributes' => [
+                                    'style' => ['width' => '50%']
+                                ]
+                            ],
+                        ]
                     ]
                 ]
-            ]
-        ]);
+            ]);
 
-        wp_enqueue_style('bppiv-meta');
-        wp_enqueue_script('bppiv-meta');
+            wp_enqueue_style('bppiv-meta');
+            wp_enqueue_script('bppiv-meta');
 
-        ?>
-        <style>
-            .shortcode_gen {
-                margin-top: 20px;
-                font-family: sans-serif;
-            }
+            ?>
+            <style>
+                .shortcode_gen {
+                    margin-top: 20px;
+                    font-family: sans-serif;
+                }
 
-            .shortcode_gen label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: 600;
-                font-size: 14px;
-            }
+                .shortcode_gen label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 600;
+                    font-size: 14px;
+                }
 
-            .shortcode_input_wrapper {
-                position: relative;
-                display: inline-block;
-            }
+                .shortcode_input_wrapper {
+                    position: relative;
+                    display: inline-block;
+                }
 
-            #bppiv_shortcode {
-                width: 300px;
-                padding: 8px 12px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-size: 14px;
-                cursor: pointer;
-                display: block;
-                text-align: center;
-                background: #4527a4;
-                color:#fff;
-                transition: border-color 0.3s ease;
-            }
+                #bppiv_shortcode {
+                    width: 300px;
+                    padding: 8px 12px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    cursor: pointer;
+                    display: block;
+                    text-align: center;
+                    background: #4527a4;
+                    color:#fff;
+                    transition: border-color 0.3s ease;
+                }
 
-            #bppiv_shortcode:hover {
-                border-color: #007cba;
-            }
+                #bppiv_shortcode:hover {
+                    border-color: #007cba;
+                }
 
-            .copied-message {
-                position: absolute;
-                top: -25px;
-                left: 0;
-                background: #007cba;
-                color: white;
-                padding: 3px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                opacity: 0;
-                transition: opacity 0.3s ease, top 0.3s ease;
-                pointer-events: none;
-            }
+                .copied-message {
+                    position: absolute;
+                    top: -25px;
+                    left: 0;
+                    background: #007cba;
+                    color: white;
+                    padding: 3px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    opacity: 0;
+                    transition: opacity 0.3s ease, top 0.3s ease;
+                    pointer-events: none;
+                }
 
-            .copied-message.show {
-                opacity: 1;
-                top: -35px;
-            }
-        </style>
+                .copied-message.show {
+                    opacity: 1;
+                    top: -35px;
+                }
+            </style>
 
-        <div class="shortcode_gen">
-            <label for="bppiv_shortcode">
-                <?php esc_html_e( 'Copy this shortcode and paste it into your post, page, or text widget content', 'panorama-viewer' ); ?>
-            </label>
+            <div class="shortcode_gen">
+                <label for="bppiv_shortcode">
+                    <?php esc_html_e( 'Copy this shortcode and paste it into your post, page, or text widget content', 'panorama-viewer' ); ?>
+                </label>
 
-            <div class="shortcode_input_wrapper" onclick="copyShortcode()">
-                <div id="copiedMsg" class="copied-message">Copied!</div>
-                <input
-                    type="text"
-                    id="bppiv_shortcode"
-                    onfocus="this.select();"
-                    readonly="readonly"
-                    value="[panorama id=<?php echo esc_attr( $post->ID ); ?>]"
-                />
+                <div class="shortcode_input_wrapper" onclick="copyShortcode()">
+                    <div id="copiedMsg" class="copied-message">Copied!</div>
+                    <input
+                        type="text"
+                        id="bppiv_shortcode"
+                        onfocus="this.select();"
+                        readonly="readonly"
+                        value="[panorama id=<?php echo esc_attr( $post->ID ); ?>]"
+                    />
+                </div>
             </div>
-        </div>
 
-        <script>
-            function copyShortcode() {
-                const input = document.getElementById('bppiv_shortcode');
-                const msg = document.getElementById('copiedMsg');
-                input.select();
-                input.setSelectionRange(0, 99999);
+            <script>
+                function copyShortcode() {
+                    const input = document.getElementById('bppiv_shortcode');
+                    const msg = document.getElementById('copiedMsg');
+                    input.select();
+                    input.setSelectionRange(0, 99999);
 
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(input.value).then(() => {
-                        msg.classList.add("show");
-                        setTimeout(() => msg.classList.remove("show"), 1500);
-                    });
-                } else {
-                    try {
-                        const successful = document.execCommand('copy');
-                        if (successful) {
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(input.value).then(() => {
                             msg.classList.add("show");
                             setTimeout(() => msg.classList.remove("show"), 1500);
+                        });
+                    } else {
+                        try {
+                            const successful = document.execCommand('copy');
+                            if (successful) {
+                                msg.classList.add("show");
+                                setTimeout(() => msg.classList.remove("show"), 1500);
+                            }
+                        } catch (err) {
+                            console.error("Copy failed", err);
                         }
-                    } catch (err) {
-                        console.error("Copy failed", err);
                     }
                 }
-            }
-        </script>
-        <?php
+            </script>
+            <?php
+        }
     }
-}
 
-
-       /*-------------------------------------------------------------------------------*/
+    /*-------------------------------------------------------------------------------*/
     /* Footer Review Request .
     /*-------------------------------------------------------------------------------*/
     function bppiv_admin_footer( $text )       {
@@ -263,9 +335,9 @@ function bppiv_shortcode_area() {
         return $text;
     }
 
-       /*-------------------------------------------------------------------------------*/
+    /*-------------------------------------------------------------------------------*/
     /* Change publish button to save.
-       /*-------------------------------------------------------------------------------*/
+    /*-------------------------------------------------------------------------------*/
     function bppiv_change_publish_button( $translation, $text )    {
         if ( 'bppiv-image-viewer' == get_post_type() ) {
             if ( $text == 'Publish' ) {
