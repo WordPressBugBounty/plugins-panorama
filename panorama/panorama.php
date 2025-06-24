@@ -4,7 +4,7 @@
  * Plugin Name: Panorama
  * Description: A lite Weight Plugin that helps you, Easily display panoramic 360 degree images / videos into WordPress Website in Post, Page, Widget Area using shortCode. 
  * Plugin URI:  https://wordpress.org/plugins/
- * Version:    1.3.0
+ * Version:    1.3.1
  * Author: bPlugins
  * Author URI: http://abuhayatpolash.com
  * License: GPLv3
@@ -57,7 +57,7 @@ if ( function_exists( 'panorama_fs' ) ) {
     }
     // ... Your plugin's main file logic ...
     define( 'BPPIV_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
-    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.3.0' ) );
+    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.3.1' ) );
     defined( 'BPPIV_PATH' ) or define( 'BPPIV_PATH', plugin_dir_path( __FILE__ ) );
     defined( 'BPPIV__FILE__' ) or define( 'BPPIV__FILE__', __FILE__ );
     add_action( 'plugin_loaded', 'bppiv_textdomain' );
@@ -78,6 +78,8 @@ if ( function_exists( 'panorama_fs' ) ) {
         register_block_type( __DIR__ . '/build/blocks/tour' );
         register_block_type( __DIR__ . '/build/blocks/gutenberg-block' );
         register_block_type( __DIR__ . '/build/blocks/virtual' );
+        // if( panorama_fs()->can_use_premium_code__premium_only()){
+        // }
     }
 
     add_action( 'wp_ajax_panoramaPremiumChecker', 'panoramaPremiumChecker' );

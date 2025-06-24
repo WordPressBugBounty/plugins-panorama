@@ -30,6 +30,13 @@ CSF::createSection( $prefix, array(
       'default'  => 'image'
     ),
     array(
+      'id'           => 'bppiv_content',
+      'type'         => 'content',
+      'title'        => ' ',
+      'content'         => __('We have a new 360° Virtual Tour Viewer. <a href="edit.php?post_type=virtual_tour">click here</a> to create', 'panorama-viewer'),
+      'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
+    ),
+    array(
       'id'           => 'bppiv_image_src',
       'type'         => 'media',
       'library'      => 'image',

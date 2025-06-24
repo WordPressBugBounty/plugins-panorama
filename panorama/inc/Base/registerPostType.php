@@ -54,7 +54,7 @@ class registerPostType{
         );
         \register_post_type( 'bppiv-image-viewer', $args );
 
-        if (panorama_fs()->can_use_premium_code()) {
+        // if (panorama_fs()->can_use_premium_code()) {
             register_post_type('virtual_tour', [
                 'labels' => [
                     'name' => '360° Virtual Tour',
@@ -75,7 +75,7 @@ class registerPostType{
                 "template" => [["panorama/virtual-tour"]],
                 'show_in_menu' => 'edit.php?post_type=bppiv-image-viewer', 
             ]);
-        }
+        // }
        
 
     }
