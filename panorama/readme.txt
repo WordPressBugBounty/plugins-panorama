@@ -2,8 +2,8 @@
 Contributors: abuhayat, bplugins, shehabulislam, shamim10, freemius
 Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
 Requires at least: 4.3
-Tested up to: 6.8
-Stable tag: 1.3.1
+Tested up to: 6.8.1
+Stable tag: 1.3.2
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -147,6 +147,9 @@ e.g.
 
 == Changelog ==
 
+
+= 1.3.2 - 10 July, 2025 =
+* Updated Shortcode clipboard area.
 
 = 1.3.1 - 24 Jun, 2025 =
 * solved the isssue of Media Placeholder (virtual tour).
