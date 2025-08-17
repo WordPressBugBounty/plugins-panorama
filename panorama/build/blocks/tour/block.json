@@ -47,7 +47,8 @@
         "compass": false,
         "mouseZoom": true,
         "disableKeyboardCtrl": false,
-        "doubleClickZoom": true
+        "doubleClickZoom": true,
+        "isByline": true
       }
     },
     "layout": {

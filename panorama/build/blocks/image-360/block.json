@@ -39,7 +39,8 @@
         "author": "bPlugins",
         "mouseZoom": true,
         "disableKeyboardCtrl": false,
-        "doubleClickZoom": true
+        "doubleClickZoom": true,
+        "isByline": true
       }
     },
     "customControl": {

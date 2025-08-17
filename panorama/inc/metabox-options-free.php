@@ -224,6 +224,20 @@ CSF::createSection( $prefix, array(
           'default' => 'bPlugins',
           'dependency'   => array( 'tourTitleAuthor', '==', '1' )
         ),
+        array(
+          'id'        => 'tour_by_prefix',
+          'type'      => 'switcher',
+          'title'     => '“by” Prefix',
+          'subtitle'  => 'Show or Hide the “by” text before the author name.',
+          'desc'      => 'Enable to show “by” before the author (e.g., by Alex Doe). Disable to hide it. Default is "Show".',
+          'text_on'   => 'Yes',
+          'text_off'  => 'No',
+          'default'   => true,
+          'dependency'=> array(
+            array( 'tourTitleAuthor', '==', '1' ),
+            array( 'author', '!=', '' ),
+        ),
+      ),
 
         // hotspot
         array(
@@ -750,6 +764,40 @@ CSF::createSection( $prefix, array(
       'class'     => 'panorama-readonly',  
       'dependency'   => array( 'bppiv_type|title_author', '==|==', 'image360|1' ),
     ),
+    array(
+      'id'        => 'showByPrefix',
+      'type'      => 'switcher',
+      'title'     => '“by” Prefix',
+      'subtitle'  => 'Show or Hide the “by” text before the author name.',
+      'desc'      => 'Enable to show “by” before the author (e.g., by Alex Doe). Disable to hide it. Default is "Show".',
+      'text_on'   => 'Yes',
+      'text_off'  => 'No',
+      'default'   => true,
+      'class'     => 'panorama-readonly', 
+      'dependency'=> array(
+          array( 'bppiv_type', '==', 'image360' ),
+          array( 'title_author', '==', '1' ),
+          array( 'author_360', '!=', '' ),
+      ),
+  ),
+  
+  // Option 2: bppiv_type = tour360
+  array(
+      'id'        => 'tourShowByPrefix',
+      'type'      => 'switcher',
+      'title'     => '“by” Prefix',
+      'subtitle'  => 'Show or Hide the “by” text before the author name.',
+      'desc'      => 'Enable to show “by” before the author (e.g., by Alex Doe). Disable to hide it. Default is "Show".',
+      'text_on'   => 'Yes',
+      'text_off'  => 'No',
+      'default'   => true,
+      'class'     => 'panorama-readonly', 
+      'dependency'=> array(
+          array( 'bppiv_type', '==', 'tour360' ),
+          array( 'tourTitleAuthor', '==', '1' ),
+          array( 'author', '!=', '' ),
+      ),
+  ),
     array(
       'id'       => 'mouse_zoom',
       'type'     => 'switcher',

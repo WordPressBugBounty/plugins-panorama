@@ -3,7 +3,7 @@ Contributors: abuhayat, bplugins, shehabulislam, shamim10, freemius
 Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
 Requires at least: 4.3
 Tested up to: 6.8.2
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -15,6 +15,8 @@ Panorama Viewer displays panoramic images/videos easily on your WordPress site. 
 == Description ==
 
 The plugin is very easy to use and anyone can use the plugin easily without any technical knowledge.
+
+https://youtu.be/yU92XDtcyWg
 
 You can embed any panoramic photos, or videos in Posts, Pages, Widget areas and WooCommerce product pages. It comes with everything you need to make the most of your panoramic pictures.
 
@@ -85,7 +87,7 @@ With these advanced features, you can create immersive and interactive experienc
 
 
 ### Video tutorial
-https://www.youtube.com/watch?v=tLX7Dp7dmXQ
+https://youtu.be/bs-U13KtYEA
 
 ### User Feedback
 
@@ -147,6 +149,9 @@ e.g.
 
 == Changelog ==
 
+
+= 1.3.4 - 17 August, 2025 =
+* Added new toggle control **“Show "by" Prefix”** to enable/disable the "by" text before the author name.
 
 = 1.3.3 - 28 July, 2025 =
 * Updated freemius sdk and pricing link.

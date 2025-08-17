@@ -24,6 +24,7 @@ $block = [
             "mouseZoom" => $get_value('mouse_zoom', true, true) ,
             "disableKeyboardCtrl" =>  $get_value('disable_keyboard_ctrl', true) ,
             "doubleClickZoom" => $get_value('double_click_zoom', true, true) ,
+            "isByline" => $get_value('showByPrefix', true, true),
         ],
         "customControl" => $get_value('custom_control', true) ,
         "layout" => [

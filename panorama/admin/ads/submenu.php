@@ -21,8 +21,8 @@ function bppiv_support_page(){
 }
 
 function renderTemplate($content){
-			$parseBlocks = parse_blocks($content);
-			return render_block($parseBlocks[0]);
+    $parseBlocks = parse_blocks($content);
+    return render_block($parseBlocks[0]);
 }
 
 function bppiv_dashboard_page_callback(){
