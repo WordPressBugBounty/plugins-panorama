@@ -4,7 +4,7 @@
  * Plugin Name: Panorama
  * Description: A lite Weight Plugin that helps you, Easily display panoramic 360 degree images / videos into WordPress Website in Post, Page, Widget Area using shortCode. 
  * Plugin URI:  https://wordpress.org/plugins/
- * Version:    1.3.4
+ * Version:    1.4.0
  * Author: bPlugins
  * Author URI: http://abuhayatpolash.com
  * License: GPLv3
@@ -42,7 +42,7 @@ if ( function_exists( 'panorama_fs' ) ) {
                     ),
                     'menu'           => array(
                         'slug'       => 'edit.php?post_type=bppiv-image-viewer',
-                        'first-path' => 'edit.php?post_type=bppiv-image-viewer&page=bppiv-support#/dashboard',
+                        'first-path' => 'edit.php?post_type=bppiv-image-viewer&page=bppiv-support#welcome',
                     ),
                     'is_live'        => true,
                 ) );
@@ -57,9 +57,10 @@ if ( function_exists( 'panorama_fs' ) ) {
     }
     // ... Your plugin's main file logic ...
     define( 'BPPIV_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
-    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.3.4' ) );
+    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.4.0' ) );
     defined( 'BPPIV_PATH' ) or define( 'BPPIV_PATH', plugin_dir_path( __FILE__ ) );
     defined( 'BPPIV__FILE__' ) or define( 'BPPIV__FILE__', __FILE__ );
+    define( 'BPPIV_HAS_PRO', file_exists( dirname( __FILE__ ) . '/freemius/start.php' ) );
     add_action( 'plugin_loaded', 'bppiv_textdomain' );
     function bppiv_textdomain() {
         load_textdomain( 'panorama-viewer', BPPIV_PLUGIN_DIR . 'languages' );
@@ -78,13 +79,13 @@ if ( function_exists( 'panorama_fs' ) ) {
         register_block_type( __DIR__ . '/build/blocks/tour' );
         register_block_type( __DIR__ . '/build/blocks/gutenberg-block' );
         register_block_type( __DIR__ . '/build/blocks/virtual' );
+        register_block_type( __DIR__ . '/build/blocks/product-spot' );
     }
 
     add_action( 'wp_ajax_panoramaPremiumChecker', 'panoramaPremiumChecker' );
     add_action( 'wp_ajax_nopriv_panoramaPremiumChecker', 'panoramaPremiumChecker' );
     add_action( 'admin_init', 'registerSettings' );
     add_action( 'rest_api_init', 'registerSettings' );
-    add_action( 'admin_enqueue_scripts', 'demoEnqueueScripts' );
     function panoramaIsPremium() {
         return panorama_fs()->can_use_premium_code();
     }
@@ -115,43 +116,10 @@ if ( function_exists( 'panorama_fs' ) ) {
         ] );
     }
 
-    function demoEnqueueScripts(  $screen  ) {
-        if ( $screen == 'bppiv-image-viewer_page_bppiv-support' ) {
-            wp_enqueue_script(
-                'ppiv-demo',
-                BPPIV_PLUGIN_DIR . 'build/demo.js',
-                [
-                    'react',
-                    'react-dom',
-                    "wp-api",
-                    "wp-util"
-                ],
-                BPPIV_VERSION
-            );
-            wp_enqueue_style(
-                'ppiv-demo',
-                BPPIV_PLUGIN_DIR . 'build/demo.css',
-                [],
-                BPPIV_VERSION
-            );
-        }
-        wp_enqueue_script(
-            'ppiv-shortCodeAsset-js',
-            BPPIV_PLUGIN_DIR . 'build/shortCodeAsset.js',
-            [],
-            BPPIV_VERSION
-        );
-        wp_enqueue_style(
-            'ppiv-shortCodeAsset-css',
-            BPPIV_PLUGIN_DIR . 'build/shortCodeAsset.css',
-            [],
-            BPPIV_VERSION
-        );
-    }
-
     //  FRAMEWORK + OTHER INCLUDES
     require_once 'inc/csf/codestar-framework.php';
     require_once 'admin/ads/submenu.php';
+    require_once 'product-spot.php';
     $init_file = BPPIV_PATH . 'inc/Init.php';
     if ( file_exists( $init_file ) ) {
         require_once $init_file;

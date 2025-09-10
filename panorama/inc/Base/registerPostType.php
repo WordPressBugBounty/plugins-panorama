@@ -20,6 +20,7 @@ class registerPostType{
         if ( is_admin() ) {
             add_filter('post_row_actions', [$this, 'bppiv_remove_row_actions'],  10, 2 );
         }
+       
     }
 
     public function init(){
@@ -54,30 +55,49 @@ class registerPostType{
         );
         \register_post_type( 'bppiv-image-viewer', $args );
 
-        // if (panorama_fs()->can_use_premium_code()) {
-            register_post_type('virtual_tour', [
-                'labels' => [
-                    'name' => '360° Virtual Tour',
-                    'singular_name' => 'Virtual Tour',
-                    'add_new' => 'Add New',
-                    'add_new_item' => 'Add New Tour',
-                    'edit_item' => 'Edit Tour',
-                    'not_found' => 'There was no tour please add one',
-                    'search_items' => 'Search Tour',
-                    'view_item' => 'View Tour',
-                    'not_found_in_trash' => 'No Tour found in trash',
-                    'item_updated' => 'Tour updated',
-                ],
-                'public' => true,
-                'has_archive' => true,
-                "show_in_rest" => true,
-                "template_lock" => "all",
-                "template" => [["panorama/virtual-tour"]],
-                'show_in_menu' => 'edit.php?post_type=bppiv-image-viewer', 
-            ]);
-        // }
        
+        register_post_type('virtual_tour', [
+            'labels' => [
+                'name' => '360° Virtual Tour',
+                'singular_name' => 'Virtual Tour',
+                'add_new' => 'Add New',
+                'add_new_item' => 'Add New Tour',
+                'edit_item' => 'Edit Tour',
+                'not_found' => 'There was no tour please add one',
+                'search_items' => 'Search Tour',
+                'view_item' => 'View Tour',
+                'not_found_in_trash' => 'No Tour found in trash',
+                'item_updated' => 'Tour updated',
+            ],
+            'public' => true,
+            'has_archive' => true,
+            "show_in_rest" => true,
+            "template_lock" => "all",
+            "template" => [["panorama/virtual-tour"]],
+            'show_in_menu' => 'edit.php?post_type=bppiv-image-viewer', 
+        ]);
 
+        register_post_type('product_spot', [
+            'labels' => [
+                'name' => 'Product Spot',
+                'singular_name' => 'Product Spot',
+                'add_new' => 'Add New',
+                'add_new_item' => 'Add New Product Spot',
+                'edit_item' => 'Edit Product Spot',
+                'not_found' => 'There was no product spot please add one',
+                'search_items' => 'Search Product Spot',
+                'view_item' => 'View Product Spot',
+                'not_found_in_trash' => 'No Product Spot found in trash',
+                'item_updated' => 'Product Spot updated',
+            ],
+            'public' => true,
+            'has_archive' => true,
+            'show_in_rest' => true,
+            'menu_icon' => 'dashicons-products',
+            'template' => [['psb/product-spot']],
+            'template_lock' => 'all',
+            'show_in_menu' => 'edit.php?post_type=bppiv-image-viewer', 
+        ]);
     }
 
     function bppiv_virtual_tour_shortcode($atts){

@@ -7,12 +7,18 @@ class ProductViewPro{
     private $meta = null;
 
     public function register(){
-        add_action('woocommerce_loaded', [$this, 'woocommerce_loaded']);
+        add_action('wp', [$this, 'woocommerce_loaded']);
         add_action('bp3d_product_model_before', [$this, 'model']);
         add_action('bp3d_product_model_after', [$this, 'model']);
     }
 
     public function woocommerce_loaded(){
+        $this->meta = get_post_meta(get_the_ID(), '_bppiv_product_', true);
+        $viewer_position = $this->meta['viewer_position'] ?? 'none';
+        if($viewer_position === 'none'){
+            return;
+        }
+
         remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
         add_action('woocommerce_before_single_product_summary',[$this, 'bp3d_product_models'], 25);
     }
@@ -31,9 +37,6 @@ class ProductViewPro{
         }
 
         global $product;
-        // wp_enqueue_style('bp3d-custom-style');
-        // wp_enqueue_script('bp3d-slick');
-        // wp_enqueue_script('bp3d-public');
         
         $columns           = apply_filters( 'woocommerce_product_thumbnails_columns', 4 );
         $post_thumbnail_id = $product->get_image_id();
@@ -49,7 +52,7 @@ class ProductViewPro{
         
         ?>
         
-        <div class="product-panorama-wrap">
+        <div class="product-panorama-wrap <?php echo esc_attr(wp_get_theme()->name) ?>">
             <div class="<?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $wrapper_classes ) ) ); ?>" data-columns="<?php echo esc_attr( $columns ); ?>">
                 <!-- Custom hook for 3d-viewer -->
                 <?php  
