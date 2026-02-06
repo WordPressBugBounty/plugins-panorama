@@ -5,6 +5,7 @@ class registerPostType{
 
     public function register(){
         add_action( 'init', [$this, 'init']);
+        add_action( 'admin_menu', [$this, 'admin_menu']);
         add_shortcode('panorama', [$this, 'bppiv_shortcode']);
         add_shortcode('virtual-tour', [$this, 'bppiv_virtual_tour_shortcode']);
         add_filter( 'manage_bppiv-image-viewer_posts_columns', [$this, 'bppiv_columns_head_only_panorama'], 10 );
@@ -29,7 +30,7 @@ class registerPostType{
             'menu_name'      => __( 'Panorama Viewer', 'panorama-viewer' ),
             'name_admin_bar' => __( 'Panorama Viewer', 'panorama-viewer' ),
             'add_new'        => __( 'Add New', 'panorama-viewer' ),
-            'add_new_item'   => __( 'Add New ', 'panorama-viewer' ),
+            'add_new_item'   => __( 'Add New', 'panorama-viewer' ),
             'new_item'       => __( 'New Panorama ', 'panorama-viewer' ),
             'edit_item'      => __( 'Edit Panorama ', 'panorama-viewer' ),
             'view_item'      => __( 'View Panorama ', 'panorama-viewer' ),
@@ -98,6 +99,13 @@ class registerPostType{
             'template_lock' => 'all',
             'show_in_menu' => 'edit.php?post_type=bppiv-image-viewer', 
         ]);
+    }
+
+    function admin_menu(){
+        remove_submenu_page(
+            'edit.php?post_type=bppiv-image-viewer',
+            'post-new.php?post_type=bppiv-image-viewer'
+        );
     }
 
     function bppiv_virtual_tour_shortcode($atts){

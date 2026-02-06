@@ -4,24 +4,29 @@ $tours = $get_value('tour_360', false, [] );
 
 $items  = [];
 
-foreach ($tours as $key => $tour) {
-    $items[] = [
-        "tour_id" => $tour['tour_id'],
-        "tour_img" =>  $tour['tour_img'],
-        "tourTitleAuthor" => (bool) $tour['tourTitleAuthor'],
-        "title" => $tour['title'],
-        "author" => $tour['author'],
-        "tour_hotSpot" => (bool) $tour['tour_hotSpot'],
-        "hotSpot_txt" => $tour['hotSpot_txt'],
-        "target_id" =>  $tour['target_id'],
-        "default_data" => (bool) $tour['default_data']
-    ];
+if (is_array($tours)) {
+    foreach ($tours as $key => $tour) {
+        $items[] = [
+            "tour_id" => $tour['tour_id'],
+            "tour_img" =>  $tour['tour_img'],
+            "tourTitleAuthor" => (bool) $tour['tourTitleAuthor'],
+            "title" => $tour['title'],
+            "author" => $tour['author'],
+            "tour_hotSpot" => (bool) $tour['tour_hotSpot'],
+            "hotSpot_txt" => $tour['hotSpot_txt'],
+            "target_id" =>  $tour['target_id'],
+            "default_data" => (bool) $tour['default_data']
+        ];
+    }
 }
+
 
 $block = [
     "blockName" => "panorama/tour",
     "attrs" =>  [
         "tour_360" => $items,
+        "previewImgUrl" => $bppiv_meta['previewImgUrl'] ?? '',
+        "loadButtonText" => $bppiv_meta['loadButtonText'] ?? 'Click to Load Panorama',
         "options" => [
             "isRotate" => $get_value('bppiv_auto_rotate', true, true),
             "autoRotateSpeed" => $bppiv_meta['bppiv_speed'] ?? 1,

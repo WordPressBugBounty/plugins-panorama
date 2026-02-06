@@ -1,9 +1,9 @@
-=== Panorama Viewer – Embed 360-Degree Images or Videos ===
-Contributors: abuhayat, bplugins, shehabulislam, shamim10, freemius
-Tags: panorama, 360 degree, 3d , virtual tour, krpano, 
+=== Panorama – 360 Virtual Tour, Panoramic image viewer and More ===
+Contributors: bplugins, abuhayat, freemius, shamim10, farazi1
+Tags: panorama, 360 degree, 3d, virtual tour, krpano, 
 Requires at least: 4.3
 Tested up to: 6.8.2
-Stable tag: 1.4.0
+Stable tag: 1.4.5
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -16,7 +16,7 @@ Panorama Viewer displays panoramic images/videos easily on your WordPress site. 
 
 The plugin is very easy to use and anyone can use the plugin easily without any technical knowledge.
 
-    https://youtu.be/yU92XDtcyWg
+https://youtu.be/yU92XDtcyWg
 
 You can embed any panoramic photos, or videos in Posts, Pages, Widget areas and WooCommerce product pages. It comes with everything you need to make the most of your panoramic pictures.
 
@@ -33,8 +33,8 @@ Enhance user interaction by enabling or disabling mouse and touch dragging, and 
 With these advanced features, you can create immersive and interactive experiences for your audience.
 
  
-**[See Live Demo](https://bplugins.com/products/panorama/#demos "Demo")** 
-**[Buy The Pro](https://bplugins.com/products/panorama/#pricing "Buy Pro version")** 
+**[See Live Demos](https://bplugins.com/products/panorama/#demos)** 
+**[Get Pro Version](https://bplugins.com/products/panorama/pricing)** 
 
 ### Features 
 
@@ -59,6 +59,7 @@ With these advanced features, you can create immersive and interactive experienc
 
 * Supports Image 3D, Image 360°, Video, Video 360°, Gallery, Tour 360°, and Google Street Viewer.
 * Auto Rotate with inactivity delay for smooth viewing experiences.
+* Preview image and load button text controls before loading the full panorama.
 * Set an Initial View to define the perfect starting angle.
 * Add and customize your own navigation controls for the panorama viewer.
 * Enable/Disable fullscreen mode for videos and 360° panoramas.
@@ -71,7 +72,6 @@ With these advanced features, you can create immersive and interactive experienc
 * Google Street Viewer with Panorama ID and interactive controls.
 * Tour 360° with hotspots, ID-based navigation, and default data control.
 * Load More button customization for an optimized gallery experience.
-* Smooth, user-friendly controls for an immersive media experience.
 
 
 ### Who Should Use Panorama Viewer Plugin?
@@ -112,6 +112,12 @@ Follow the steps below to embed a panoramic image.
 4. Copy Generated ShortCode (See below the Panorama title ) and paste it where you like to embed the Panorama Viewer.
 
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the Panorama Viewer – 360 Degree Image + Video Viewer plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/9e5fb819-4b62-4820-a920-21dde4762ab6). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
+
+
 = ⭐ Checkout our other WordPress Plugins- = 
 
 🔥 **[Html5 Audio Player](https://audioplayerwp.com/)** – Best audio player plugin for WordPress.
@@ -136,6 +142,7 @@ e.g.
 3. Use shortcode in page, post or in widgets.
 4. If you want to show panorama in your theme php, Place `<?php echo do_shortcode('YOUR_SHORTCODE'); ?>` in your templates
 
+
 == Screenshots ==
 
 1. Gutenberg block
@@ -149,6 +156,23 @@ e.g.
 
 == Changelog ==
 
+
+= 1.4.5 - 24 Jan, 2026 =
+* Fixed multiple panorama editing, preview, and Gutenberg block issues.
+* Improved viewer behavior and controls across all panorama types.
+* Documentation improvements.
+
+= 1.4.4 - 10 Dec, 2025 =
+* Title & Author/credit fully removed when disabled; no hidden HTML or outbound links.
+
+= 1.4.3 - 03 Dec, 2025 =
+* Added new plugin banner.
+
+= 1.4.2 - 21 Nov, 2025 =
+* Added preview image and load button text controls.
+
+= 1.4.1 - 12 October, 2025 =
+* Update pricing plan, added buy now button in feature compare section and fixed the Initial view parameters in X,Y,Z.
 
 = 1.4.0 - 10 Sep, 2025 =
 * Added new product spot block and update dashboard.

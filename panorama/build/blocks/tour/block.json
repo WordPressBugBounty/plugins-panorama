@@ -29,6 +29,14 @@
         }
       ]
     },
+    "previewImgUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "loadButtonText": {
+      "type": "string",
+      "default": "Click to Load Panorama"
+    },
     "options": {
       "type": "object",
       "default": {

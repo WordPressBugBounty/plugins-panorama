@@ -34,12 +34,12 @@ $block = [
                 "mobile" => $bppiv_height
             ],
             "buttonColors" => [
-                "color" =>  $bppiv_meta['motion_button_text_color'],
-                "bg" =>  $bppiv_meta['motion_button_btn_bg']
+                "color" =>  $bppiv_meta['motion_button_text_color'] ?? '',
+                "bg" =>  $bppiv_meta['motion_button_btn_bg'] ?? ''
             ],
             "buttonHoverColors" => [
-                "color" =>  $bppiv_meta['hover_motion_button_text_color'],
-                "bg" =>  $bppiv_meta['hover_motion_button_btn_bg']
+                "color" =>  $bppiv_meta['hover_motion_button_text_color'] ?? '',
+                "bg" =>  $bppiv_meta['hover_motion_button_btn_bg'] ?? ''
             ]
         ]
     ],

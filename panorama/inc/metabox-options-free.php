@@ -42,7 +42,7 @@ CSF::createSection( $prefix, array(
       'library'      => 'image',
       'button_title' => 'Upload Image',
       'title'        => 'Image Source.',
-      'desc'         => 'To create an image panorama, Panoramic image is Recommended is Recommended.',
+      'desc'         => 'To create an image panorama, Panoramic image is Recommended.',
       'dependency'   => array( 'bppiv_type', '==', 'image' ),
     ),
     array(
@@ -53,8 +53,8 @@ CSF::createSection( $prefix, array(
       'title'        => '360° Image Source.',
       'desc'         => 'To create an image panorama, Panoramic image is Recommended. You can also use external Panoramic Image link here.',
       'dependency'   => array( 'bppiv_type', '==', 'image360' ),
-
     ),
+    
     array(
       'id'           => 'bppiv_video_src',
       'type'         => 'media',
@@ -279,16 +279,16 @@ CSF::createSection( $prefix, array(
         ),
       ),
       'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
-    ), 
+    ),
     array(
       'id'           => 'bppiv_pano_id',
       'type'         => 'text',
-      'title'        => 'Panorama ID',
-      'desc'         => 'Input here Google Street View Panorama Id <a href="https://e4youth.org/blog/2019/02/05/snapping-360-images-from-google-street-view/" target="_blank">Click here for Panorama ID Details</a>',
-      'placeholder'  => 'Paste here panorama id',
+      'title'        => __('Panorama ID', 'panorama-viewer'),
+      'desc' => __('Input here Google Street View Panorama Id. <a href="#" class="pano-help-link">How to find it?</a>', 'panorama-viewer'),
+      'placeholder'  => 'Paste panorama ID here',
       'default'      => 'JmSoPsBPhqWvaBmOqfFzgA',
+      'dependency'   => array('bppiv_type', '==', 'gstreet'),
       'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'gstreet' ),
     ),
     array(
       'id'           => 'bppiv_image_width',
@@ -332,7 +332,7 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_auto_rotate',
       'type'     => 'switcher',
-      'title'    => 'Auto Rotate ?',
+      'title'    => 'Auto Rotate',
       'desc'     => 'Enable or Disable Auto Rotate',
       'text_on'  => 'Yes',
       'text_off' => 'No',
@@ -364,7 +364,7 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'control_show_hide',
       'type'     => 'switcher',
-      'title'    => 'Hide Default Control ?',
+      'title'    => 'Hide Default Control',
       'subtitle' => 'Hide Switch for Default Control.',
       'desc'     => 'Show or Hide Control',
       'text_on'  => 'Yes',
@@ -530,6 +530,26 @@ CSF::createSection( $prefix, array(
       'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
     ),
     array(
+      'id'           => 'previewImgUrl',
+      'type'         => 'upload',
+      'library'      => 'image',
+      'button_title' => __('Upload Image', 'panorama-viewer'),
+      'title'        => __('Preview Image (Optional)', 'panorama-viewer'),
+      'desc'         => __('Shown before the panorama loads (especially useful when Autoload is OFF).', 'panorama-viewer'),
+      'dependency'   => array('bppiv_auto_load|bppiv_type', '==|any','0|image360,tour360'),
+      'class'     => 'panorama-readonly', 
+    ),
+    array(
+      'id'       => 'loadButtonText',
+      'type'     => 'text',
+      'title'    => __('Load Button Text', 'panorama-viewer'),
+      'desc'     => __("This text replaces the default 'Click to Load Panorama' button when Autoload is OFF", "panorama-viewer"),
+      'placeholder' => "Enter your load button text here",
+      'default' => "Click to Load Panorama",
+      'dependency'   => array('bppiv_auto_load|bppiv_type', '==|any','0|image360,tour360'),
+      'class'     => 'panorama-readonly',  
+    ),
+    array(
       'id'       => 'draggable_360',
       'type'     => 'switcher',
       'title'    => 'Draggable ',
@@ -556,7 +576,7 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_auto_play',
       'type'     => 'switcher',
-      'title'    => 'Auto Play ?',
+      'title'    => 'Auto Play',
       'desc'     => 'To enable autoplay, please make sure "Muted" is also turned on.',
       'text_on'  => 'Yes',
       'text_off' => 'No',
@@ -566,7 +586,7 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_video_mute',
       'type'     => 'switcher',
-      'title'    => 'Video Mute ?',
+      'title'    => 'Video Mute',
       'subtitle' => 'Enable or Disable Video Mute',
       'desc'     => 'Specify if the video should auto play',
       'text_on'  => 'Yes',
@@ -587,7 +607,7 @@ CSF::createSection( $prefix, array(
     array(
       'id'       => 'bppiv_video_loop',
       'type'     => 'switcher',
-      'title'    => 'Video Loop ?',
+      'title'    => 'Video Loop',
       'desc'     => 'Enable or Disable Video Loop',
       'text_on'  => 'Yes',
       'text_off' => 'No',
@@ -757,7 +777,7 @@ CSF::createSection( $prefix, array(
       'id'       => 'author_360',
       'type'     => 'text',
       'title'    => 'Author',
-      'subtitle' => 'Display Author Name."',
+      'subtitle' => 'Display Author Name.',
       'desc'     => 'Input Author Name',
       'placeholder' => "bPlugins",
       'default' => '<a href="https://bplugins.com/">bPlugins</a>',

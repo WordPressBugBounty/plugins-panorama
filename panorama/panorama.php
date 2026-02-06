@@ -4,7 +4,7 @@
  * Plugin Name: Panorama
  * Description: A lite Weight Plugin that helps you, Easily display panoramic 360 degree images / videos into WordPress Website in Post, Page, Widget Area using shortCode. 
  * Plugin URI:  https://wordpress.org/plugins/
- * Version:    1.4.0
+ * Version:    1.4.5
  * Author: bPlugins
  * Author URI: http://abuhayatpolash.com
  * License: GPLv3
@@ -18,7 +18,6 @@ if ( function_exists( 'panorama_fs' ) ) {
     panorama_fs()->set_basename( false, __FILE__ );
 } else {
     if ( !function_exists( 'panorama_fs' ) ) {
-        // ... Freemius integration snippet ...
         function panorama_fs() {
             global $panorama_fs;
             if ( !isset( $panorama_fs ) ) {
@@ -57,18 +56,32 @@ if ( function_exists( 'panorama_fs' ) ) {
     }
     // ... Your plugin's main file logic ...
     define( 'BPPIV_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
-    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.4.0' ) );
+    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.4.5' ) );
     defined( 'BPPIV_PATH' ) or define( 'BPPIV_PATH', plugin_dir_path( __FILE__ ) );
     defined( 'BPPIV__FILE__' ) or define( 'BPPIV__FILE__', __FILE__ );
     define( 'BPPIV_HAS_PRO', file_exists( dirname( __FILE__ ) . '/freemius/start.php' ) );
-    add_action( 'plugin_loaded', 'bppiv_textdomain' );
+    add_action( 'plugins_loaded', 'bppiv_textdomain' );
+    add_action( 'init', 'onInit' );
+    add_action( 'wp_ajax_panoramaPremiumChecker', 'panoramaPremiumChecker' );
+    add_action( 'wp_ajax_nopriv_panoramaPremiumChecker', 'panoramaPremiumChecker' );
+    add_action( 'admin_init', 'registerSettings' );
+    add_action( 'rest_api_init', 'registerSettings' );
+    add_filter(
+        'plugin_row_meta',
+        'mppiv_plugin_row_meta',
+        10,
+        2
+    );
+    add_action( 'admin_enqueue_scripts', "bppiv_popup_modal" );
+    function bppiv_popup_modal() {
+        wp_add_inline_script( 'jquery-core', "\r\n            jQuery(document).ready(function(\$){\r\n                \$('.pano-help-link').on('click', function(e){\r\n                    e.preventDefault();\r\n                    if (\$('#pano-help-modal').length === 0) {\r\n                        \$('body').append(`\r\n                            <div id='pano-help-modal' style='\r\n                                position:fixed; top:0; left:0; width:100%; height:100%;\r\n                                background:rgba(0,0,0,0.5); z-index:9999;\r\n                                display:flex; justify-content:center; align-items:center;'>\r\n                                <div style='\r\n                                    background:#fff; padding:20px; max-width:500px; width:90%;\r\n                                    border-radius:6px; box-shadow:0 5px 15px rgba(0,0,0,0.3);'>\r\n                                    <h3>How to Find Google Street View Panorama ID</h3>\r\n                                    <ol>\r\n                                        <li>Open <b>Google Maps</b></li>\r\n                                        <li>Search your location</li>\r\n                                        <li>Drag the yellow Street View icon onto a road</li>\r\n                                        <li>Copy the URL from your browser</li>\r\n                                        <li>Find <b>panoid=</b> in the URL</li>\r\n                                        <li>Copy the text after <b>panoid=</b></li>\r\n                                    </ol>\r\n                                    <p>Example: <code>https://www.google.com/maps/...panoid=JmSoPsBPhqWvaBmOqfFzgA</code></p>\r\n                                    <p>Panorama ID: <code>JmSoPsBPhqWvaBmOqfFzgA</code></p>\r\n                                    <button id='pano-help-close' style='margin-top:10px; cursor:pointer;'>Close</button>\r\n                                </div>\r\n                            </div>\r\n                        `);\r\n                    }\r\n                    \$('#pano-help-modal').fadeIn();\r\n                    \$('#pano-help-close').on('click', function(){ \$('#pano-help-modal').fadeOut(); });\r\n                    \$('#pano-help-modal').on('click', function(e){ if(e.target.id==='pano-help-modal'){ \$(this).fadeOut(); } });\r\n                });\r\n            });\r\n        " );
+    }
+
     function bppiv_textdomain() {
         load_textdomain( 'panorama-viewer', BPPIV_PLUGIN_DIR . 'languages' );
     }
 
-    add_action( 'init', 'onInit' );
     function onInit() {
-        flush_rewrite_rules();
         register_block_type( __DIR__ . '/build/blocks/parent' );
         register_block_type( __DIR__ . '/build/blocks/image-360' );
         register_block_type( __DIR__ . '/build/blocks/image-3d' );
@@ -82,10 +95,6 @@ if ( function_exists( 'panorama_fs' ) ) {
         register_block_type( __DIR__ . '/build/blocks/product-spot' );
     }
 
-    add_action( 'wp_ajax_panoramaPremiumChecker', 'panoramaPremiumChecker' );
-    add_action( 'wp_ajax_nopriv_panoramaPremiumChecker', 'panoramaPremiumChecker' );
-    add_action( 'admin_init', 'registerSettings' );
-    add_action( 'rest_api_init', 'registerSettings' );
     function panoramaIsPremium() {
         return panorama_fs()->can_use_premium_code();
     }
@@ -114,6 +123,13 @@ if ( function_exists( 'panorama_fs' ) ) {
             ] ),
             'sanitize_callback' => 'sanitize_text_field',
         ] );
+    }
+
+    function mppiv_plugin_row_meta(  $plugin_meta, $plugin_file  ) {
+        if ( strpos( $plugin_file, 'panorama/panorama.php' ) !== false && time() < strtotime( '2025-12-05' ) ) {
+            $plugin_meta[] = "<a href='https://bplugins.com/coupons/?from=plugins.php&plugin=panorama' target='_blank' style='font-weight: 600; color: #146ef5;'>🎉 Black Friday Sale - Get up to 80% OFF Now!</a>";
+        }
+        return $plugin_meta;
     }
 
     //  FRAMEWORK + OTHER INCLUDES

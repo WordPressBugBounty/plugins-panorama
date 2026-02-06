@@ -34,7 +34,6 @@ function renderCurrentDashboardPage(){ ?>
 <?php }
 
 function adminEnqueueScripts( $screen ) {
-    global $typenow;
 
     if( $screen == 'bppiv-image-viewer_page_bppiv-support'){
         wp_enqueue_style( 'current-admin-dashboard', BPPIV_PLUGIN_DIR . 'build/admin-dashboard.css', [], BPPIV_VERSION );
