@@ -3,8 +3,8 @@
 /**
  * Plugin Name: Panorama
  * Description: A lite Weight Plugin that helps you, Easily display panoramic 360 degree images / videos into WordPress Website in Post, Page, Widget Area using shortCode. 
- * Plugin URI:  https://wordpress.org/plugins/
- * Version:    1.4.5
+ * Plugin URI:  https://bplugins.com/products/panorama
+ * Version:    1.5.0
  * Author: bPlugins
  * Author URI: http://abuhayatpolash.com
  * License: GPLv3
@@ -25,25 +25,26 @@ if ( function_exists( 'panorama_fs' ) ) {
                     define( 'WP_FS__PRODUCT_8824_MULTISITE', true );
                 }
                 // Include Freemius SDK.
-                require_once dirname( __FILE__ ) . '/freemius/start.php';
+                require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
                 $panorama_fs = fs_dynamic_init( array(
-                    'id'             => '8824',
-                    'slug'           => 'panorama',
-                    'type'           => 'plugin',
-                    'public_key'     => 'pk_a112d1d1d66d3b480dbea5690d3ff',
-                    'is_premium'     => false,
-                    'premium_suffix' => 'Pro',
-                    'has_addons'     => false,
-                    'has_paid_plans' => true,
-                    'trial'          => array(
+                    'id'               => '8824',
+                    'slug'             => 'panorama',
+                    'type'             => 'plugin',
+                    'public_key'       => 'pk_a112d1d1d66d3b480dbea5690d3ff',
+                    'is_premium'       => false,
+                    'premium_suffix'   => 'Pro',
+                    'has_addons'       => false,
+                    'has_paid_plans'   => true,
+                    'trial'            => array(
                         'days'               => 7,
                         'is_require_payment' => false,
                     ),
-                    'menu'           => array(
+                    'menu'             => array(
                         'slug'       => 'edit.php?post_type=bppiv-image-viewer',
                         'first-path' => 'edit.php?post_type=bppiv-image-viewer&page=bppiv-support#welcome',
                     ),
-                    'is_live'        => true,
+                    'is_live'          => true,
+                    'is_org_compliant' => true,
                 ) );
             }
             return $panorama_fs;
@@ -56,10 +57,10 @@ if ( function_exists( 'panorama_fs' ) ) {
     }
     // ... Your plugin's main file logic ...
     define( 'BPPIV_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
-    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.4.5' ) );
+    define( 'BPPIV_VERSION', ( isset( $_SERVER['HTTP_HOST'] ) && $_SERVER['HTTP_HOST'] === 'localhost' ? time() : '1.5.0' ) );
     defined( 'BPPIV_PATH' ) or define( 'BPPIV_PATH', plugin_dir_path( __FILE__ ) );
     defined( 'BPPIV__FILE__' ) or define( 'BPPIV__FILE__', __FILE__ );
-    define( 'BPPIV_HAS_PRO', file_exists( dirname( __FILE__ ) . '/freemius/start.php' ) );
+    define( 'BPPIV_HAS_PRO', file_exists( dirname( __FILE__ ) . '/vendor/freemius/start.php' ) );
     add_action( 'plugins_loaded', 'bppiv_textdomain' );
     add_action( 'init', 'onInit' );
     add_action( 'wp_ajax_panoramaPremiumChecker', 'panoramaPremiumChecker' );
@@ -73,6 +74,32 @@ if ( function_exists( 'panorama_fs' ) ) {
         2
     );
     add_action( 'admin_enqueue_scripts', "bppiv_popup_modal" );
+    add_action( 'wp_ajax_bppivGetBlocks', 'bppivGetBlocks_callback' );
+    // panorama get blocks for our modern dashboard
+    function bppivGetBlocks_callback() {
+        $nonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) ?? null;
+        if ( !wp_verify_nonce( $nonce, 'bppiv_admin_nonce' ) ) {
+            wp_send_json_error( 'Invalid Request' );
+        }
+        $data = json_decode( stripslashes( $_POST['data'] ), true );
+        $db_data = get_option( 'bppivBlocks', [] );
+        if ( !isset( $data ) && $db_data ) {
+            wp_send_json_success( $db_data );
+        }
+        update_option( 'bppivBlocks', $data );
+        wp_send_json_success( $data );
+    }
+
+    // panorama demo & help link
+    add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( $links ) {
+        $help_link = '<a href="' . admin_url( 'edit.php?post_type=bppiv-image-viewer&page=bppiv-support' ) . '" style="color:#FF7A00;font-weight:bold;">Help & Demos</a>';
+        $links[] = $help_link;
+        return $links;
+    } );
+    if ( BPPIV_HAS_PRO ) {
+        require_once BPPIV_PATH . 'inc/LicenseActivation.php';
+    }
+    // panorama google street help modal
     function bppiv_popup_modal() {
         wp_add_inline_script( 'jquery-core', "\r\n            jQuery(document).ready(function(\$){\r\n                \$('.pano-help-link').on('click', function(e){\r\n                    e.preventDefault();\r\n                    if (\$('#pano-help-modal').length === 0) {\r\n                        \$('body').append(`\r\n                            <div id='pano-help-modal' style='\r\n                                position:fixed; top:0; left:0; width:100%; height:100%;\r\n                                background:rgba(0,0,0,0.5); z-index:9999;\r\n                                display:flex; justify-content:center; align-items:center;'>\r\n                                <div style='\r\n                                    background:#fff; padding:20px; max-width:500px; width:90%;\r\n                                    border-radius:6px; box-shadow:0 5px 15px rgba(0,0,0,0.3);'>\r\n                                    <h3>How to Find Google Street View Panorama ID</h3>\r\n                                    <ol>\r\n                                        <li>Open <b>Google Maps</b></li>\r\n                                        <li>Search your location</li>\r\n                                        <li>Drag the yellow Street View icon onto a road</li>\r\n                                        <li>Copy the URL from your browser</li>\r\n                                        <li>Find <b>panoid=</b> in the URL</li>\r\n                                        <li>Copy the text after <b>panoid=</b></li>\r\n                                    </ol>\r\n                                    <p>Example: <code>https://www.google.com/maps/...panoid=JmSoPsBPhqWvaBmOqfFzgA</code></p>\r\n                                    <p>Panorama ID: <code>JmSoPsBPhqWvaBmOqfFzgA</code></p>\r\n                                    <button id='pano-help-close' style='margin-top:10px; cursor:pointer;'>Close</button>\r\n                                </div>\r\n                            </div>\r\n                        `);\r\n                    }\r\n                    \$('#pano-help-modal').fadeIn();\r\n                    \$('#pano-help-close').on('click', function(){ \$('#pano-help-modal').fadeOut(); });\r\n                    \$('#pano-help-modal').on('click', function(e){ if(e.target.id==='pano-help-modal'){ \$(this).fadeOut(); } });\r\n                });\r\n            });\r\n        " );
     }
@@ -81,6 +108,7 @@ if ( function_exists( 'panorama_fs' ) ) {
         load_textdomain( 'panorama-viewer', BPPIV_PLUGIN_DIR . 'languages' );
     }
 
+    // register all blocks
     function onInit() {
         register_block_type( __DIR__ . '/build/blocks/parent' );
         register_block_type( __DIR__ . '/build/blocks/image-360' );
@@ -125,6 +153,7 @@ if ( function_exists( 'panorama_fs' ) ) {
         ] );
     }
 
+    // black friday
     function mppiv_plugin_row_meta(  $plugin_meta, $plugin_file  ) {
         if ( strpos( $plugin_file, 'panorama/panorama.php' ) !== false && time() < strtotime( '2025-12-05' ) ) {
             $plugin_meta[] = "<a href='https://bplugins.com/coupons/?from=plugins.php&plugin=panorama' target='_blank' style='font-weight: 600; color: #146ef5;'>🎉 Black Friday Sale - Get up to 80% OFF Now!</a>";
@@ -133,7 +162,7 @@ if ( function_exists( 'panorama_fs' ) ) {
     }
 
     //  FRAMEWORK + OTHER INCLUDES
-    require_once 'inc/csf/codestar-framework.php';
+    require_once 'vendor/csf/codestar-framework.php';
     require_once 'admin/ads/submenu.php';
     require_once 'product-spot.php';
     $init_file = BPPIV_PATH . 'inc/Init.php';
@@ -169,6 +198,7 @@ if ( function_exists( 'panorama_fs' ) ) {
     }
 
     require_once 'shortcode.php';
+    // codestar textdomain issues resolver
     add_action( 'init', function () {
         if ( panorama_fs()->is_free_plan() ) {
             require_once 'inc/metabox-options-free.php';

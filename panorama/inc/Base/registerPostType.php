@@ -21,7 +21,23 @@ class registerPostType{
         if ( is_admin() ) {
             add_filter('post_row_actions', [$this, 'bppiv_remove_row_actions'],  10, 2 );
         }
+
+        add_filter('template_include', [$this, 'bppiv_load_custom_template']);
        
+    }
+
+    public function bppiv_load_custom_template($template) {
+
+        if (is_singular('bppiv-image-viewer')) {
+
+            $plugin_template = BPPIV_PATH . 'inc/templates/single-bppiv-image-viewer.php';
+
+            if (file_exists($plugin_template)) {
+                return $plugin_template;
+            }
+        }
+
+        return $template;
     }
 
     public function init(){
@@ -40,7 +56,7 @@ class registerPostType{
         $args = array(
             'labels'          => $labels,
             'description'     => __( 'Panorama Options.', 'panorama-viewer' ),
-            'public'          => false,
+            'public'          => true,
             'show_ui'         => true,
             'show_in_menu'    => true,
             'menu_icon'       => 'dashicons-welcome-view-site',
@@ -248,103 +264,138 @@ class registerPostType{
             wp_enqueue_script('bppiv-meta');
 
             ?>
-            <style>
-                .shortcode_gen {
-                    margin-top: 20px;
-                    font-family: sans-serif;
-                }
 
-                .shortcode_gen label {
-                    display: block;
-                    margin-bottom: 8px;
-                    font-weight: 600;
-                    font-size: 14px;
-                }
+            <div class="panorama_shortcode">
+                 <p class="shortcode_desc">
+                    <?php echo esc_html__("Use this shortcode in your post or page, or click Embed to share it on other websites :", "panorama") ?>
+                </p>
+                <code 
+                    class="shortcode_copy" 
+                    data-code="[panorama id='<?php echo esc_attr($post->ID); ?>']">
+                    [panorama id='<?php echo esc_attr($post->ID); ?>']
+                </code>
 
-                .shortcode_input_wrapper {
-                    position: relative;
-                    display: inline-block;
-                }
+                <button type="button" class="bppiv-embed-btn">
+                    <span class="dashicons dashicons-share"></span> Embed
+                </button>
+            </div>
 
-                #bppiv_shortcode {
-                    width: 300px;
-                    padding: 8px 12px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-size: 14px;
-                    cursor: pointer;
-                    display: block;
-                    text-align: center;
-                    background: #4527a4;
-                    color:#fff;
-                    transition: border-color 0.3s ease;
-                }
+            <div id="bppiv-embed-modal" class="bppiv-modal">
+                <div class="bppiv-modal-content">
 
-                #bppiv_shortcode:hover {
-                    border-color: #007cba;
-                }
+                    <span class="bppiv-close">&times;</span>
 
-                .copied-message {
-                    position: absolute;
-                    top: -25px;
-                    left: 0;
-                    background: #007cba;
-                    color: white;
-                    padding: 3px 8px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease, top 0.3s ease;
-                    pointer-events: none;
-                }
+                    <h3>Embed Panorama</h3>
+                    <?php
+                        $meta = get_post_meta($post->ID, '_bppivimages_', true);
+                        $height = 600;
+                        $type = '';
+                        if (is_array($meta)) {
+                            if (isset($meta['bppiv_type'])) {
+                                $type = $meta['bppiv_type'];
+                            }
+                        }
+                        if ($type !== 'video2') {
+                            if (is_array($meta) && isset($meta['bppiv_image_height']['height']) && is_numeric($meta['bppiv_image_height']['height'])) {
+                                $height = (int) $meta['bppiv_image_height']['height'];
+                            }
+                        }
+                        if ($type === 'video2') {
+                            $iframe_code = sprintf(
+                                '<iframe id="panorama_%s" src="%s" width="100%%" loading="lazy" frameborder="0" allowfullscreen></iframe>',
+                                esc_attr($post->ID),
+                                esc_url(get_permalink($post->ID))
+                            );
+                        } else {
+                            $iframe_code = sprintf(
+                                '<iframe id="panorama_%s" src="%s" width="100%%" height="%d" loading="lazy" frameborder="0" allowfullscreen></iframe>',
+                                esc_attr($post->ID),
+                                esc_url(get_permalink($post->ID)),
+                                $height
+                            );
+                        }
+                        $embed_code = $iframe_code;
+                        if ($type === 'video2') {
+                            $script_url = BPPIV_PLUGIN_DIR . 'public/assets/js/iframe-resizer.js';
+                            // $embed_code = sprintf(
+                            //     '<div>%s%s</div>',
+                            //     $iframe_code,
+                            //     "\n" . sprintf('<script src="%s"></script>', esc_url($script_url))
+                            // );
+                        // without div
+                        $embed_code = $iframe_code . "\n" . sprintf('<script src="%s"></script>', esc_url($script_url));
+                        } 
+                        // else {
+                        //     $embed_code = sprintf('<div>%s</div>', $iframe_code);
+                        // }
+                    ?>
+                    <textarea style="height: <?php echo ($type === 'video2') ? '146px' : '66px'; ?>;" id="bppiv-iframe-code" readonly><?php echo esc_html($embed_code); ?></textarea>
+                   <?php if ($type === 'video2') : ?>
+                        <p class="bppiv-embed-note">
+                            <strong>Note:</strong> For Video 360°, the iframe and height-resizer script should work normally. 
+                            If the video appears misaligned on your page, wrap both the iframe and the 
+                            height-resizer script inside a <code>&lt;div&gt;</code> container to ensure proper 
+                            alignment and automatic height adjustment.
+                        </p>
+                    <?php else : ?>
+                        <p class="bppiv-embed-note">
+                            <strong>Note:</strong> If the panorama appears misaligned on your page, wrap the iframe inside a 
+                            <code>&lt;div&gt;</code> container. This usually fixes alignment issues in some editors.
+                        </p>
+                    <?php endif; ?>
+                    <p class="bppiv-embed-note">
+                        <strong>Note:</strong> If you copy the embed code and the panorama does not display correctly, 
+                        please go to your WordPress admin dashboard → Settings → Permalinks and click 
+                        <em>Save Changes</em>. This refreshes the URLs and ensures the embed works properly.
+                    </p>
+                    <button type="button" id="bppiv-copy-iframe" class="bppiv-copy-embed-btn">Copy Embed Code</button>
 
-                .copied-message.show {
-                    opacity: 1;
-                    top: -35px;
-                }
-            </style>
-
-            <div class="shortcode_gen">
-                <label for="bppiv_shortcode">
-                    <?php esc_html_e( 'Copy this shortcode and paste it into your post, page, or text widget content', 'panorama-viewer' ); ?>
-                </label>
-
-                <div class="shortcode_input_wrapper" onclick="copyShortcode()">
-                    <div id="copiedMsg" class="copied-message">Copied!</div>
-                    <input
-                        type="text"
-                        id="bppiv_shortcode"
-                        onfocus="this.select();"
-                        readonly="readonly"
-                        value="[panorama id=<?php echo esc_attr( $post->ID ); ?>]"
-                    />
                 </div>
             </div>
 
             <script>
-                function copyShortcode() {
-                    const input = document.getElementById('bppiv_shortcode');
-                    const msg = document.getElementById('copiedMsg');
-                    input.select();
-                    input.setSelectionRange(0, 99999);
+               document.addEventListener("DOMContentLoaded", function(){
+                    const modal = document.getElementById("bppiv-embed-modal");
+                    const btn = document.querySelector(".bppiv-embed-btn");
+                    const close = document.querySelector(".bppiv-close");
+                    const copyBtn = document.getElementById("bppiv-copy-iframe");
+                    const textarea = document.getElementById("bppiv-iframe-code");
 
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(input.value).then(() => {
-                            msg.classList.add("show");
-                            setTimeout(() => msg.classList.remove("show"), 1500);
-                        });
-                    } else {
-                        try {
-                            const successful = document.execCommand('copy');
-                            if (successful) {
-                                msg.classList.add("show");
-                                setTimeout(() => msg.classList.remove("show"), 1500);
-                            }
-                        } catch (err) {
-                            console.error("Copy failed", err);
+                    if(btn){
+                        btn.onclick = function(){
+                            modal.style.display = "block";
                         }
                     }
-                }
+
+                    if(close){
+                        close.onclick = function(){
+                            modal.style.display = "none";
+                        }
+                    }
+
+                    window.onclick = function(e){
+                        if(e.target == modal){
+                            modal.style.display = "none";
+                        }
+                    }
+
+                    if(copyBtn){
+                        copyBtn.onclick = function(){
+
+                        textarea.select();
+                        textarea.setSelectionRange(0,99999);
+
+                        navigator.clipboard.writeText(textarea.value).then(function(){
+                            copyBtn.innerText = "Copied!";
+                            setTimeout(function(){
+                                copyBtn.innerText = "Copy Embed Code";
+                            },1500);
+                        });
+
+                    }
+                    }
+
+                });
             </script>
             <?php
         }
@@ -353,7 +404,7 @@ class registerPostType{
     /*-------------------------------------------------------------------------------*/
     /* Footer Review Request .
     /*-------------------------------------------------------------------------------*/
-    function bppiv_admin_footer( $text )       {
+    function bppiv_admin_footer( $text ) {
         
         if ( 'bppiv-image-viewer' == get_post_type() ) {
             $url = 'https://wordpress.org/support/plugin/panorama/reviews/?filter=5#new-post';

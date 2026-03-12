@@ -216,13 +216,13 @@
   transition: color 0.1s ease-in-out, background 0.1s ease-in-out;
 }
 
-#TB_closeWindowButton::before {
+/* #TB_closeWindowButton::before {
   content: "x";
   color: #ffffff;
   font-size: 20px;
   font-weight: bold;
   line-height: 0;
-}
+} */
 .hayat-readonly {
   filter: invert(1);
 }

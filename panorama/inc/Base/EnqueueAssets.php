@@ -39,23 +39,49 @@ class EnqueueAssets{
         wp_register_style( 'bppiv-main-style', BPPIV_PLUGIN_DIR . 'public/assets/css/style.css', [], BPPIV_VERSION );
     }
     
-    public function registerBackendAssets(){
-        wp_register_style( 'bppiv-custom-style', BPPIV_PLUGIN_DIR . 'public/assets/css/admin-style.css',[], BPPIV_VERSION );
-        wp_enqueue_style( 'bppiv-custom-style' );
-        
-        // Script
-        wp_register_script( 'bppiv-admin-script', BPPIV_PLUGIN_DIR . 'public/assets/js/admin-scripts.js', ['jquery'], BPPIV_VERSION, true );
-        wp_enqueue_script( 'bppiv-admin-script' );
-        
-        wp_register_style( 'bppiv-readonly', BPPIV_PLUGIN_DIR . 'public/assets/css/readonly.css', [], BPPIV_VERSION );
-        
-        // classic editor preview
-        wp_enqueue_script( 'classic-editor-preview', BPPIV_PLUGIN_DIR . 'build/classic-editor-preview.js', ['react', 'react-dom'], BPPIV_VERSION );
+     public function registerBackendAssets($screen){
+        $current = function_exists('get_current_screen') ? get_current_screen() : null;
+        $post_type = $current && isset($current->post_type) ? $current->post_type : '';
+        $screen_id = $current && isset($current->id) ? $current->id : '';
+        $is_bppiv_screen = ($post_type === 'bppiv-image-viewer') || ($screen_id === 'bppiv-image-viewer_page_bppiv-support');
 
-        // meta fields
-        wp_register_script( 'bppiv-meta', BPPIV_PLUGIN_DIR . 'build/custom-codestar.js', ['jquery', 'wp-compose', 'lodash'], BPPIV_VERSION, true );
-        wp_register_style( 'bppiv-meta', BPPIV_PLUGIN_DIR . 'build/custom-codestar.css', [], BPPIV_VERSION, 'all' );
+        if ( $is_bppiv_screen ) {
+            wp_register_style( 'bppiv-custom-style', BPPIV_PLUGIN_DIR . 'public/assets/css/admin-style.css',[], BPPIV_VERSION );
+            wp_enqueue_style( 'bppiv-custom-style' );
+            
+            // Script
+            wp_register_script( 'bppiv-admin-script', BPPIV_PLUGIN_DIR . 'public/assets/js/admin-scripts.js', ['jquery'], BPPIV_VERSION, true );
+            wp_enqueue_script( 'bppiv-admin-script' );
+            
+            wp_register_style( 'bppiv-readonly', BPPIV_PLUGIN_DIR . 'public/assets/css/readonly.css', [], BPPIV_VERSION );
+            
+            // classic editor preview (only for our CPT)
+            wp_enqueue_script( 'classic-editor-preview', BPPIV_PLUGIN_DIR . 'build/classic-editor-preview.js', ['react', 'react-dom'], BPPIV_VERSION );
 
+            // meta fields
+            wp_register_script( 'bppiv-meta', BPPIV_PLUGIN_DIR . 'build/custom-codestar.js', ['jquery', 'wp-compose', 'lodash'], BPPIV_VERSION, true );
+            wp_register_style( 'bppiv-meta', BPPIV_PLUGIN_DIR . 'build/custom-codestar.css', [], BPPIV_VERSION, 'all' );
+
+            global $post;
+            if ($screen === 'post.php' || $screen === 'post-new.php') {
+                if (isset($post) && $post->post_type === 'bppiv-image-viewer') {
+                    wp_add_inline_script('jquery-core', "
+                        document.addEventListener('click', function(e){
+                            var el = e.target.closest('.shortcode_copy');
+                            if(!el) return;
+
+                            navigator.clipboard.writeText(el.dataset.code);
+
+                            var original = el.innerHTML;
+                            el.innerHTML = 'Copied!';
+                            setTimeout(function(){
+                                el.innerHTML = original;
+                            }, 1000);
+                        });
+                    ");
+                }
+            }
+        }
     }
 }
 

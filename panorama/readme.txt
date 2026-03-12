@@ -2,8 +2,8 @@
 Contributors: bplugins, abuhayat, freemius, shamim10, farazi1
 Tags: panorama, 360 degree, 3d, virtual tour, krpano, 
 Requires at least: 4.3
-Tested up to: 6.8.2
-Stable tag: 1.4.5
+Tested up to: 6.9.1
+Stable tag: 1.5.0
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -36,42 +36,35 @@ With these advanced features, you can create immersive and interactive experienc
 **[See Live Demos](https://bplugins.com/products/panorama/#demos)** 
 **[Get Pro Version](https://bplugins.com/products/panorama/pricing)** 
 
-### Features 
+= Free Features = 
 
-=== Panorama Viewer Plugin for WordPress offers you a complete solution for displaying any 360-degree photos, and 360-degree videos that will startle your visitors.=== 
-
-* Versatile: You can embed your 360 Photos, Videos, and Google street locations using Panorama Viewer plugin.
-  
-* 360 Image Gallery: Make gallery of your 360 degree photos. 
-  
-* Lightweight: Very lightweight plugin, it does not impact to your site speed.
-
-* Multiple Source: It supports external links for your panoramic files, also you can store the file in the WordPress media library.  
- 
-* Elementor: Its works great with elementor page builder ( Simply copy the shortcode )
-
-* User friendly interface: This plugin come up with a clean and easy to use interface which gives you an excellent experience.
-
-* ShortCode: The ShortCode API  enabled you to embed the model anywhere in the site.
+- **Versatile**: Embed your 360 Photos, Videos, and Google Street locations.
+- **360 Image Gallery**: Create a gallery of your 360° photos.
+- **Lightweight**: Very lightweight plugin, does not affect site speed.
+- **Elementor Support**: Works with Elementor page builder (simply copy the shortcode).
+- **User Friendly Interface**: Clean and easy-to-use interface for a smooth experience.
+- **ShortCode API**: Embed models anywhere on the site using shortcode.
+- **Embed URL**: Share and view content on any website via direct URL.
+- **Multiple Source (Basic)**: Upload and use panoramic files from the WordPress media library (external links support limited in Pro).
  
 
-### Pro Features
+= Pro Features =
 
-* Supports Image 3D, Image 360°, Video, Video 360°, Gallery, Tour 360°, and Google Street Viewer.
-* Auto Rotate with inactivity delay for smooth viewing experiences.
-* Preview image and load button text controls before loading the full panorama.
-* Set an Initial View to define the perfect starting angle.
-* Add and customize your own navigation controls for the panorama viewer.
-* Enable/Disable fullscreen mode for videos and 360° panoramas.
-* Picture-in-Picture and Playback Speed Control for video viewers.
-* Show/Hide Title and Author with customizable text options.
-* Manage and sort gallery items with image and video support.
-* Customizable column layout, spacing, and gallery item limits.
-* Draggable, Mouse Zoom, and Compass support for better navigation.
-* Disable Keyboard Control and Double Click Zoom for refined interactions.
-* Google Street Viewer with Panorama ID and interactive controls.
-* Tour 360° with hotspots, ID-based navigation, and default data control.
-* Load More button customization for an optimized gallery experience.
+- **Advanced Media Support**: Supports Image 3D, Image 360°, Video, Video 360°, Gallery, Tour 360°, and Google Street Viewer.  
+- **Auto Rotate**: Smooth viewing with inactivity delay.  
+- **Preview & Load Controls**: Preview image and customize load button text before loading the full content.  
+- **Initial View**: Set the perfect starting angle for each panorama.  
+- **Custom Navigation**: Add and customize your own navigation controls.  
+- **Fullscreen Mode**: Enable or disable fullscreen for videos and 360° panoramas.  
+- **Video Controls**: Picture-in-Picture and Playback Speed Control for video viewers.  
+- **Title & Author Display**: Show/Hide Title and Author with customizable text options.  
+- **Gallery Management**: Manage and sort gallery items with image and video support.  
+- **Gallery Layout**: Customizable column layout, spacing, and item limits.  
+- **Navigation Support**: Draggable, Mouse Zoom, and Compass support for better navigation.  
+- **Interaction Settings**: Disable Keyboard Control and Double Click Zoom for refined interactions.  
+- **Google Street Viewer**: Panorama ID with interactive controls.  
+- **Tour 360°**: Hotspots, ID-based navigation, and default data control.  
+- **Load More Button**: Customize Load More button for an optimized gallery experience.
 
 
 ### Who Should Use Panorama Viewer Plugin?
@@ -156,6 +149,9 @@ e.g.
 
 == Changelog ==
 
+
+= 1.5.0 - 12 Mar, 2026 =
+* Added embed URL feature to allow sharing and viewing on any website via direct URL.
 
 = 1.4.5 - 24 Jan, 2026 =
 * Fixed multiple panorama editing, preview, and Gutenberg block issues.
