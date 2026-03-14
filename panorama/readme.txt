@@ -3,7 +3,7 @@ Contributors: bplugins, abuhayat, freemius, shamim10, farazi1
 Tags: panorama, 360 degree, 3d, virtual tour, krpano, 
 Requires at least: 4.3
 Tested up to: 6.9.1
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -149,6 +149,9 @@ e.g.
 
 == Changelog ==
 
+
+= 1.5.1 - 14 Mar, 2026 =
+* Fixed fullscreen display issue in 360° gallery.
 
 = 1.5.0 - 12 Mar, 2026 =
 * Added embed URL feature to allow sharing and viewing on any website via direct URL.
