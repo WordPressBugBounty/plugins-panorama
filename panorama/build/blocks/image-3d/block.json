@@ -73,12 +73,12 @@
     "attributes": {}
   },
   "editorScript": [
-    "file:./index.js",
+    "file:../index.js",
     "bppiv-panolens",
     "bppiv-three",
     "wp-api"
   ],
-  "editorStyle": "file:./index.css",
+  "editorStyle": "file:../index.css",
   "style": "file:./view.css",
   "render": "file:./render.php",
   "viewScript": [

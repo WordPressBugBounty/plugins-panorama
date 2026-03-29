@@ -28,7 +28,18 @@ add_action('wp_enqueue_scripts', function(){
 </head>
 <body>
 
-    <?php echo wp_kses_post(do_shortcode('[panorama id="' . get_the_ID() . '"]')); ?>
+    <?php 
+        $post_type = get_post_type();
+        if ($post_type === 'virtual_tour') {
+            echo do_shortcode('[virtual-tour id="' . get_the_ID() . '"]');
+        }
+        elseif ($post_type === 'product_spot') {
+            echo do_shortcode('[product_spot id="' . get_the_ID() . '"]');
+        }
+        else {
+            echo wp_kses_post(do_shortcode('[panorama id="' . get_the_ID() . '"]')); 
+        }
+    ?>
 
     <?php wp_footer(); ?>
 

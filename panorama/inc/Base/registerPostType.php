@@ -28,7 +28,7 @@ class registerPostType{
 
     public function bppiv_load_custom_template($template) {
 
-        if (is_singular('bppiv-image-viewer')) {
+        if (is_singular(['bppiv-image-viewer', 'virtual_tour', 'product_spot'])) {
 
             $plugin_template = BPPIV_PATH . 'inc/templates/single-bppiv-image-viewer.php';
 
@@ -381,18 +381,30 @@ class registerPostType{
 
                     if(copyBtn){
                         copyBtn.onclick = function(){
+                            textarea.select();
+                            textarea.setSelectionRange(0, 99999);
 
-                        textarea.select();
-                        textarea.setSelectionRange(0,99999);
-
-                        navigator.clipboard.writeText(textarea.value).then(function(){
-                            copyBtn.innerText = "Copied!";
-                            setTimeout(function(){
-                                copyBtn.innerText = "Copy Embed Code";
-                            },1500);
-                        });
-
-                    }
+                            if (navigator.clipboard && window.isSecureContext) {
+                                navigator.clipboard.writeText(textarea.value).then(function(){
+                                    copyBtn.innerText = "Copied!";
+                                    setTimeout(function(){
+                                        copyBtn.innerText = "Copy Embed Code";
+                                    }, 1500);
+                                });
+                            } else {
+                                try {
+                                    var successful = document.execCommand('copy');
+                                    if (successful) {
+                                        copyBtn.innerText = "Copied!";
+                                        setTimeout(function(){
+                                            copyBtn.innerText = "Copy Embed Code";
+                                        }, 1500);
+                                    }
+                                } catch (err) {
+                                    console.error('Fallback: Oops, unable to copy', err);
+                                }
+                            }
+                        }
                     }
 
                 });

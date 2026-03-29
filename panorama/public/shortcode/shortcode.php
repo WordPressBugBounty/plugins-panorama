@@ -47,7 +47,7 @@ function bppiv_image_viewer( $atts ){
     <?php endif; ?>
 
     <style>
-        <?php echo '#bppiv_panorama'. esc_attr($id); ?>{
+        <?php echo '#bppiv_panorama'. esc_attr($id); ?> {
             width: <?php echo esc_attr($bppiv_width); ?>;
             height: <?php echo esc_attr($bppiv_height); ?>;
         }

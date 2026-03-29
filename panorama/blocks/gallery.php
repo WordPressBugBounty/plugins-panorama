@@ -8,7 +8,14 @@ foreach ($galleries as $key => $gallery) {
     $items[] = [
         "img" => $gallery['panoramic_img']['url'],
         "isSetVideo" => (bool) $gallery['gal_type_cheek'],
-        "video" => $gallery['gal_type_video']['url']
+        "video" => $gallery['gal_type_video']['url'],
+        "fov" => isset($gallery['fov']) ? $gallery['fov'] : 85,
+        "initialPosition" => isset($gallery['initial_view_pos']) ? [
+            "x" => $gallery['initial_view_pos']['top'],
+            "y" => $gallery['initial_view_pos']['right'],
+            "z" => $gallery['initial_view_pos']['bottom']
+        ] : null,
+        "initialView" => isset($gallery['gallery_initial_view']) ? (bool)$gallery['gallery_initial_view'] : false
     ];
 }
 

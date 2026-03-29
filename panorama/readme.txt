@@ -3,7 +3,7 @@ Contributors: bplugins, abuhayat, freemius, shamim10, farazi1
 Tags: panorama, 360 degree, 3d, virtual tour, krpano, 
 Requires at least: 4.3
 Tested up to: 6.9.1
-Stable tag: 1.5.1
+Stable tag: 1.6.0
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -149,6 +149,10 @@ e.g.
 
 == Changelog ==
 
+= 1.6.0 - 29 Mar, 2026 =
+* **New:** Embed URL option added for 360 Virtual Tours and Product Spot (Gutenberg block + dashboard settings).
+* **Improved:** Modernized shortcode clipboard UI with integrated embed URL support.
+* **New:** Initial View Toggle, Position, and Zoom Level (FOV) controls added for Gallery items with per-item customization (Gutenberg block + dashboard settings).
 
 = 1.5.1 - 14 Mar, 2026 =
 * Fixed fullscreen display issue in 360° gallery.

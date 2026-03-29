@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "panorama/gallery",
   "version": "1.0.0",
   "title": "Gallery",
@@ -19,7 +19,14 @@
         {
           "img": "",
           "isSetVideo": false,
-          "video": ""
+          "video": "",
+          "fov": 85,
+          "initialView": false,
+          "initialPosition": {
+            "x": 0,
+            "y": 0,
+            "z": 120
+          }
         }
       ]
     },
@@ -61,11 +68,11 @@
     "attributes": {}
   },
   "editorScript": [
-    "file:./index.js",
+    "file:../index.js",
     "bppiv-panolens",
     "bppiv-three"
   ],
-  "editorStyle": "file:./index.css",
+  "editorStyle": "file:../index.css",
   "style": "file:./view.css",
   "render": "file:./render.php",
   "viewScript": [

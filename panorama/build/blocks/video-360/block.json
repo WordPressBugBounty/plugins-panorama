@@ -64,12 +64,12 @@
     "attributes": {}
   },
   "editorScript": [
-    "file:./index.js",
+    "file:../index.js",
     "videojs",
     "videojs-vr",
     "wp-api"
   ],
-  "editorStyle": "file:./index.css",
+  "editorStyle": "file:../index.css",
   "style": [
     "file:./view.css",
     "videojs",

@@ -66,17 +66,35 @@ class EnqueueAssets{
             if ($screen === 'post.php' || $screen === 'post-new.php') {
                 if (isset($post) && $post->post_type === 'bppiv-image-viewer') {
                     wp_add_inline_script('jquery-core', "
+                        function bppiv_copy_to_clipboard(text) {
+                            if (navigator.clipboard && window.isSecureContext) {
+                                return navigator.clipboard.writeText(text);
+                            } else {
+                                var textArea = document.createElement('textarea');
+                                textArea.value = text;
+                                textArea.style.position = 'fixed';
+                                textArea.style.left = '-9999px';
+                                textArea.style.top = '0';
+                                document.body.appendChild(textArea);
+                                textArea.focus();
+                                textArea.select();
+                                var successful = document.execCommand('copy');
+                                document.body.removeChild(textArea);
+                                return successful ? Promise.resolve() : Promise.reject();
+                            }
+                        }
+
                         document.addEventListener('click', function(e){
                             var el = e.target.closest('.shortcode_copy');
                             if(!el) return;
 
-                            navigator.clipboard.writeText(el.dataset.code);
-
-                            var original = el.innerHTML;
-                            el.innerHTML = 'Copied!';
-                            setTimeout(function(){
-                                el.innerHTML = original;
-                            }, 1000);
+                            bppiv_copy_to_clipboard(el.dataset.code).then(function(){
+                                var original = el.innerHTML;
+                                el.innerHTML = 'Copied!';
+                                setTimeout(function(){
+                                    el.innerHTML = original;
+                                }, 1000);
+                            });
                         });
                     ");
                 }

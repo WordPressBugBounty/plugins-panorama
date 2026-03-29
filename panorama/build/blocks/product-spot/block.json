@@ -142,10 +142,10 @@
     "attributes": {}
   },
   "editorScript": [
-    "file:./index.js",
+    "file:../index.js",
     "wp-api"
   ],
-  "editorStyle": "file:./index.css",
+  "editorStyle": "file:../index.css",
   "style": "file:./view.css",
   "render": "file:./render.php",
   "viewScript": "file:./view.js"
