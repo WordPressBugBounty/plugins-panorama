@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "panorama/tour",
   "version": "1.0.0",
   "title": "Tour",
@@ -97,6 +97,7 @@
   ],
   "editorStyle": "file:../index.css",
   "style": [
+    "file:./style-view.css",
     "file:./view.css",
     "bppiv-pannellum-css"
   ],

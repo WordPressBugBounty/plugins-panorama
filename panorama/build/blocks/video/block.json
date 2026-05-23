@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "panorama/video",
   "version": "1.0.0",
   "title": "Video",
@@ -72,7 +72,10 @@
     "wp-api"
   ],
   "editorStyle": "file:../index.css",
-  "style": "file:./view.css",
+  "style": [
+    "file:./style-view.css",
+    "file:./view.css"
+  ],
   "render": "file:./render.php",
   "viewScript": [
     "file:./view.js",

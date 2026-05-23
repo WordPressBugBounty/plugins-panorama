@@ -9,9 +9,8 @@
  class Init{
      private static $instance = null;
      private function __construct() {
- 		add_action( 'init', [ $this, 'i18n' ] );
-        add_action('woocommerce_after_register_post_type', [$this, 'load_woocommerce_files']);
-    }
+         add_action('woocommerce_after_register_post_type', [$this, 'load_woocommerce_files']);
+     }
  
      public static function instance() {
  		if ( is_null( self::$instance ) ) {
@@ -21,17 +20,16 @@
  		return self::$instance;
  	}
  
-    public function i18n() {
- 		load_plugin_textdomain('model-viewer',false,dirname( plugin_basename( BPPIV__FILE__ ) ) . '/languages/');
- 	}
- 
      public static function get_services(){
-         return [
-             Base\registerPostType::class,
-             Woocommerce\ProductView::class,
-             Base\EnqueueAssets::class,
-         ];
-     }
+        return [
+            Base\registerPostType::class,
+            Woocommerce\ProductView::class,
+            Base\EnqueueAssets::class,
+            Base\Blocks::class,
+            Base\Admin::class,
+            Base\Ajax::class,
+        ];
+    }
  
      public static function get_woocommerce_services(){
          return [
@@ -61,22 +59,15 @@
          }
      }
  
-     public static function require_file($class){
-         $file = str_replace('\\', '/', $class);
- 
-         if(file_exists(BPPIV_PATH.str_replace('BPPIV', 'inc', $file."Pro").'.php') && \panorama_fs()->is__premium_only() && \panorama_fs()->can_use_premium_code()){
-             $file = BPPIV_PATH.str_replace('BPPIV', 'inc', $file."Pro").'.php';;
-             $class = $class."Pro";
-         }else {
-             $file = BPPIV_PATH.str_replace('BPPIV', 'inc', $file).'.php';
-         }
- 
-         if(file_exists($file)){
-             require_once($file);
-             return $class;
-         }
-         return false;
-     }
+    public static function require_file($class){
+        $file = str_replace('\\', '/', $class);
+        $file = BPPIV_PATH.str_replace('BPPIV', 'inc', $file).'.php';
+        if(file_exists($file)){
+            require_once($file);
+            return $class;
+        }
+        return false;
+    }
  
      private static function instantiate($class){
          if(class_exists($class)){

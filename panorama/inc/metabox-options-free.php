@@ -1,893 +1,538 @@
 <?php if ( ! defined( 'ABSPATH' )  ) { die; } 
 
-$prefix = '_bppivimages_';
+if ( ! class_exists( 'BPPIV_MetaBox' ) ) {
+  class BPPIV_MetaBox {
+    private $prefix = '_bppivimages_';
 
-CSF::createMetabox( $prefix, array(
-  'title'        => 'Panorama Settings',
-  'post_type'    => 'bppiv-image-viewer',
-  'show_restore' => true,
-  'footer_credit'    => ' ',
-) );
+    public function init() {
+      $this->register_metabox();
+      add_filter( 'csf_sc__save', array( $this, 'exclude_fields_before_save' ), 10, 1 );
+    }
 
-CSF::createSection( $prefix, array(
-  'fields' => array(
-    array(
-      'id'       => 'bppiv_type',
-      'type'     => 'button_set',
-      'title'    => 'Panorama Type.',
-      'subtitle' => 'Choose Panorama Type',
-      'desc'     => 'Select Panorama, Default- Image.',
-      'multiple' => false,
-      'options'  => array(
-        'image'   => 'Image 3D',
-        'image360'=> 'Image 360°',
-        'video'   => 'Video',
-        'video2'   => 'Video 360°',
-        'gallery'  => 'Gallery',
-        'tour360'  => 'Tour 360°',
-        'gstreet'  => 'Google Street View',
-      ),
-      'default'  => 'image'
-    ),
-    array(
-      'id'           => 'bppiv_content',
-      'type'         => 'content',
-      'title'        => ' ',
-      'content'         => __('We have a new 360° Virtual Tour Viewer. <a href="edit.php?post_type=virtual_tour">click here</a> to create', 'panorama-viewer'),
-      'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
-    ),
-    array(
-      'id'           => 'bppiv_image_src',
-      'type'         => 'media',
-      'library'      => 'image',
-      'button_title' => 'Upload Image',
-      'title'        => 'Image Source.',
-      'desc'         => 'To create an image panorama, Panoramic image is Recommended.',
-      'dependency'   => array( 'bppiv_type', '==', 'image' ),
-    ),
-    array(
-      'id'           => 'image_src_360',
-      'type'         => 'upload',
-      'library'      => 'image',
-      'button_title' => 'Upload Image',
-      'title'        => '360° Image Source.',
-      'desc'         => 'To create an image panorama, Panoramic image is Recommended. You can also use external Panoramic Image link here.',
-      'dependency'   => array( 'bppiv_type', '==', 'image360' ),
-    ),
-    
-    array(
-      'id'           => 'bppiv_video_src',
-      'type'         => 'media',
-      'library'      => 'video',
-      'button_title' => 'Upload Video',
-      'title'        => 'Video Source.',
-      'desc'         => 'Upload Panoramic Video',
-      'dependency'   => array( 'bppiv_type', 'any', 'video,video2' ),
-    ),
-    array(
-      'id'           => 'bppiv_pan_gallery',
-      'type'         => 'group',
-      'library'      => 'video',
-      'button_title' => 'Add New Gallery Item',
-      'title'        => 'Panorama Gallery.',
-      'subtitle'     => 'Show multiple items according to your need .',
-      'desc'         => 'Create Panorama Gallery, Supports panoramic image and Video Both',
-      'fields'    => array(
-        array(
-          'id'    => 'panoramic_img',
-          'type'  => 'media',
-          'title' => 'Panoramic Images',
-          'library' => 'image',
-        ),
-        array(
-          'id'    => 'gal_type_cheek',
-          'type'  => 'checkbox',
-          'title' => 'Set Video',
-          'default' => true,
-          'desc'    => 'If you want to Set Video for this item please checked it',
-        ),
-        array(
-          'id'    => 'gal_type_video',
-          'type'  => 'media',
-          'title' => 'Gallery Video',
-          'desc'  => 'Upload Panoramic Video',
-          'library' => 'video',
-          'dependency'   => array( 'gal_type_cheek', '==', '1' ),
-        ),
-        array(
-          'id'       => 'initial_view',
+    public function register_metabox() {
+      if ( class_exists( 'CSF' ) ) {
+        CSF::createMetabox( $this->prefix, array(
+          'title'        => 'Panorama Settings',
+          'post_type'    => 'bppiv-image-viewer',
+          'show_restore' => true,
+          'theme'        => 'light',
+        ) );
 
-          'type'     => 'switcher',
-          'title'    => __('Initial View', 'panorama-viewer'),
-          'default'  => false,
-        ),
-        array(
-          'id'    => 'initial_view_pos',
-          'type'  => 'spacing',
-          'title' => __('Initial Position', 'panorama-viewer'),
-          'default'  => array(
-            'top'    => 0,
-            'right'  => 0,
-            'bottom' => 0,
+        $this->configure();
+        $this->controls();
+        $this->dymensions();
+        $this->styles();
+        // $this->upcoming_section('Ads');
+      }
+    }
+
+    private function get_pro_badge($text = 'PRO') {
+      return ' <span style="background:#146ef5;color:#fff;padding:0px 5px;border-radius:4px;font-size:10px;font-weight:bold;margin-left:5px;vertical-align:middle;display:inline-block;line-height:1.4;">' . $text . '</span>';
+    }
+
+    // private function get_upcoming_badge() {
+    //   return ' <span style="background:#00d2ff;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:bold;margin-left:5px;vertical-align:middle;display:inline-block;line-height:1.4;">UPCOMING</span>';
+    // }
+
+    public function configure() {
+      CSF::createSection( $this->prefix, array(
+        'title'  => 'Configuration',
+        'icon'   => 'fa fa-cog',
+        'fields' => array(
+          array(
+            'id'       => 'bppiv_type',
+            'type'     => 'button_set',
+            'title'    => 'Panorama Type',
+            'subtitle' => 'Choose your panorama type.',
+            'desc'     => 'Choose from 3D images, 360° photos/videos, galleries, virtual tours, or Google Street View.',
+            'options'  => array(
+              'image'   => 'Image 3D',
+              'image360'=> 'Image 360°',
+              'video'   => 'Video',
+              'video2'   => 'Video 360°',
+              'gallery'  => 'Gallery' . $this->get_pro_badge(),
+              'tour360'  => 'Tour 360°' . $this->get_pro_badge(),
+              'gstreet'  => 'Google Street View',
+            ),
+            'default'  => 'image'
           ),
-          'left'   => false,
-          'show_units' => false,
-          'top_icon'    => 'x',
-          'right_icon'  => 'y',
-          'bottom_icon' => 'z',
-          'dependency' => array( 'initial_view', '==', '1' ),
-        ),
-         array(
-          'id'           => 'fov',
-          'type'         => 'spinner',
-          'title'        => __('Initial Zoom Level', 'panorama-viewer'),
-          'default'  => 85,
-          'min'      => 30,
-          'max'      => 120,
-          'step'     => 1,
-        ),
-        
-      ),
-      'class'     => 'panorama-readonly',  
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'           => 'bppiv_gallery_limit',
-      'type'         => 'spinner',
-      'title'        => 'Gallery Limits',
-      'subtitle'     => 'Number of items to show in primary gallery',
-      'desc'         => 'How much item do you want to show ?',
-      'default'  => 6,
-      'class'     => 'panorama-readonly',  
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'           => 'bppiv_gallery_column',
-      'type'         => 'spinner',
-      'title'        => 'Number of Columns',
-      'desc'         => 'Number of Columns in Gallery Items',
-      'default'  => 2,
-       'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'           => 'bppiv_gallery_column_gap',
-      'type'         => 'dimensions',
-      'title'        => 'Spacing Between Columns',
-      'desc'         => 'Spacing Between Columns of Gallery Items',
-      'default'      => array(
-          'width'  => '10',
-          'unit'   => 'px', 
-      ),
-       'class'     => 'panorama-readonly', 
-      'height'       => false,
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-      'choices'      => array(
-          'units' => array('px'),
-      ),
-    ),
-    array(
-      'id'         => 'loadMore_btn_text',
-      'type'       => 'text',
-      'title'      => 'Load More Button Text',
-      'subtitle'   => 'You can use Custom Text in Button',
-      'desc'       => 'Input Load More Button Text',
-      'default'    => 'Load More',
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'         => 'loadMore_text_color',
-      'type'       => 'color',
-      'title'      => 'Load More Text Color',
-      'subtitle'   => 'You can use Custom Color',
-      'desc'       => 'Choose Load More Button Text Color',
-      'default'    => '#fff',
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'         => 'loadMore_btn_bg',
-      'type'       => 'color',
-      'title'      => 'Load More Button Background',
-      'desc'       => 'Choose Load More Button Background Color',
-      'default'    => '#000',
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'         => 'loadMore_hover_bg',
-      'type'       => 'color',
-      'title'      => 'Load More Hover Background',
-      'desc'       => 'Choose Load More Hover Background Color',
-      'default'    => '#222',
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'gallery' ),
-    ),
-    array(
-      'id'        => 'tour_360',
-      'type'      => 'group',
-      'title'     => 'Tour 360°',
-      'subtitle'  => 'Multiple panoramas can be joined together into a virtual tour using this tour feature.',
-      'class'     => 'panorama-readonly', 
-      'fields'    => array(
-        array(
-          'id'    => 'tour_id',
-          'type'  => 'text',
-          'title'    => 'Tour ID',
-          'subtitle'    => 'Use Tour Unique ID. For example: house, house123.',
-          'desc'    => 'Input Your Unique ID here. Don\'t use space !!',
-          'default' => 'house'
-        ),
-        array(
-          'id'    => 'tour_img',
-          'type'  => 'upload',
-          'library'      => 'image',
-          'title'  => 'Tour Image',
-          'subtitle'=>'Use Tour Image',
-          'desc'    =>'Upload Your Tour Image or Use External Image Link',
-        ),
-        // Title Author
-        array(
-          'id'       => 'tourTitleAuthor',
-          'type'     => 'switcher',
-          'title'    => 'Title & Author ',
-          'subtitle' => 'Show or Hide Title and Author.',
-          'desc'     => 'Choose Show or Hide. Default is "Show"',
-          'text_on'   => 'Show',
-          'text_off'  => 'Hide',
-          'text_width' => 70,
-          'default'  => true,
-        ),
-        array(
-          'id'    => 'title',
-          'type'  => 'text',
-          'title'  => 'Title',
-          'subtitle'=> 'Use Tour Title',
-          'desc'    => 'Input Your Tour Title here.',
-          'default' => 'Spring House or Dairy',
-          'dependency'   => array( 'tourTitleAuthor', '==', '1' )
-        ),
-        array(
-          'id'    => 'author',
-          'type'  => 'text',
-          'title'  => 'Author',
-          'subtitle'=> 'Use Tour Author/Location Name',
-          'desc'    => 'Input Tour Author/Location Name here.',
-          'default' => 'bPlugins',
-          'dependency'   => array( 'tourTitleAuthor', '==', '1' )
-        ),
-        array(
-          'id'        => 'tour_by_prefix',
-          'type'      => 'switcher',
-          'title'     => '“by” Prefix',
-          'subtitle'  => 'Show or Hide the “by” text before the author name.',
-          'desc'      => 'Enable to show “by” before the author (e.g., by Alex Doe). Disable to hide it. Default is "Show".',
-          'text_on'   => 'Yes',
-          'text_off'  => 'No',
-          'default'   => true,
-          'dependency'=> array(
-            array( 'tourTitleAuthor', '==', '1' ),
-            array( 'author', '!=', '' ),
-        ),
-      ),
+          // --- ROBUST JS TO HIDE/SHOW TABS ---
+          array(
+            'type'    => 'callback',
+            'function' => function() {
+              ?>
+              <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                  function syncTabs() {
+                    var type = $('input[name="_bppivimages_[bppiv_type]"]:checked').val();
+                    if(!type) return;
 
-        // hotspot
-        array(
-          'id'       => 'tour_hotSpot',
-          'type'     => 'switcher',
-          'title'    => 'HotSpot ',
-          'subtitle' => 'Choose HotSpot Option. OFF or ON ',
-          'desc'     => 'OFF or ON HotSpot. Default "ON"',
-          'text_on'   => 'ON',
-          'text_off'  => 'OFF',
-          'default'  => true,
-        ),
-        array(
-          'id'    => 'hotSpot_txt',
-          'type'  => 'text',
-          'title'  => 'HotSpot Text',
-          'subtitle'=>'Use HotSpot Text That will display during mouse hover',
-          'desc'    =>'Input Your HotSpot Text Here',
-          'default' => 'Spring House',
-          'dependency'   => array( 'tour_hotSpot', '==', '1' ),
-        ),
-        array(
-          'id'    => 'target_id',
-          'type'  => 'text',
-          'title'  => 'Target ID',
-          'subtitle'=>'Use Targeted ID That will create HotSpot relation between two Scene / Tour Image',
-          'desc'    =>'Input Targeted Tour name here. Tour name will work like ID',
-          'dependency'   => array( 'tour_hotSpot', '==', '1' )
-        ),
-        array(
-          'id'    => 'default_data',
-          'type'  => 'switcher',
-          'title'  => 'Default',
-          'subtitle'=>'Set as default to display Primary Scene',
-          'desc'    =>'Choose Yes to set as default Scene. If you don\'t Choose automatically will Display first Item',
-          'text_on'   => 'Yes',
-          'text_off'  => 'No',
-          'default'  => false,
-        ),
-      ),
-      'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
-    ),
-    array(
-      'id'           => 'bppiv_pano_id',
-      'type'         => 'text',
-      'title'        => __('Panorama ID', 'panorama-viewer'),
-      'desc' => __('Input here Google Street View Panorama Id. <a href="#" class="pano-help-link">How to find it?</a>', 'panorama-viewer'),
-      'placeholder'  => 'Paste panorama ID here',
-      'default'      => 'JmSoPsBPhqWvaBmOqfFzgA',
-      'dependency'   => array('bppiv_type', '==', 'gstreet'),
-      'class'     => 'panorama-readonly', 
-    ),
-    array(
-      'id'           => 'bppiv_image_width',
-      'type'         => 'dimensions',
-      'title'        => 'Width',
-      'desc'         => 'Panorama Viewer Width',
-      'default'  => array(
-        'width'  => '100',
-        'unit'   => '%',
-      ),
-      'height'   => false,
-      'dependency'   => array( 'bppiv_type', '!=', 'gallery' ),
-    ),
-    array(
-      'id'           => 'bppiv_image_height',
-      'type'         => 'dimensions',
-      'title'        => 'Height',
-      'desc'         => 'Panorama Viewer height',
-      'units'        => ['px', 'em', 'pt'],
-      'default'  => array(
-        'height' => '320',
-        'unit'   => 'px',
-      ),
-      'width'   => false,
-      'dependency'   => [
-        array( 'bppiv_type', '!=', 'video2' ),
-        array( 'bppiv_type', '!=', 'gallery' ),
-      ]
-    ),
-    array(
-      'id'       => 'bppiv_alignment',
-      'type'     => 'select',
-      'title'    => 'Viewer Alignment',
-      'subtitle' => 'Choose the alignment of the viewer.',
-      'desc'     => 'Set the viewer alignment: Left, Right, or Center.',
-      'options'  => array(
-        'start'   => 'Left',
-        'center' => 'Center',
-        'end'  => 'Right',
-      ),
-      'default'  => 'center',
-      'dependency'   => array( 'bppiv_type', '!=', 'gallery'  ),
-    ),
-    array(
-      'id'       => 'bppiv_auto_rotate',
-      'type'     => 'switcher',
-      'title'    => 'Auto Rotate',
-      'desc'     => 'Enable or Disable Auto Rotate',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', 'any', 'image,image360,tour360,gstreet' ),
-    ),
-    array(
-      'id'       => 'bppiv_speed',
-      'type'     => 'spinner',
-      'title'    => 'Auto Rotate Speed',
-      'subtitle' => 'Choose Auto Rotate Speed',
-      'desc'     => 'Auto rotate speed as in degree per second. Positive is counter-clockwise and negative is clockwise.', 
-      'default'  => 2.0,
-      'dependency' => array( 'bppiv_type|bppiv_auto_rotate', 'any|==', 'image,image360,tour360,gstreet|true' ),
-    ),
-    array(
-      'id'       => 'auto_rotate_inactivity_delay',
-      'type'     => 'spinner',
-      'title'    => 'Auto Rotate Inactivity Delay',
-      'subtitle' => 'Choose Auto Rotate Inactivity Delay',
-      'desc'     => 'Delay before auto-rotation starts after inactivity (in milliseconds).', 
-      'default'  => 3000,
-      'step'     => 1000, 
-      'min'      => 1000,
-      'max'      => 60000,
-      'class'     => 'panorama-readonly',
-      'dependency' => array( 'bppiv_type|bppiv_auto_rotate', 'any|==', 'image,image360,tour360,gstreet|true' ),
-    ),
-    array(
-      'id'       => 'control_show_hide',
-      'type'     => 'switcher',
-      'title'    => 'Hide Default Control',
-      'subtitle' => 'Hide Switch for Default Control.',
-      'desc'     => 'Show or Hide Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'dependency'   => array( 'bppiv_type', 'any', 'image,image360,tour360,gstreet' ),
-    ),
-    array(
-      'id'       => 'initial_view',
-      'type'     => 'switcher',
-      'title'    => 'Initial View',
-      'subtitle' => 'Choose Custom Angle of View for Initial Viewing ',
-      'desc'     => 'Enable or Disable Initial Viewe. Default "OFF"',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'class'     => 'panorama-readonly',  
-      'dependency'   => array( 'bppiv_type', 'any', 'image,image360,tour360,gstreet' ),
-      'type'  => 'spacing',
-      'title' => 'Initial Values',
-      'subtitle'=> 'Set The Custom values for Initial View. Default Initial Values are ("X=-61.42 Y=-8.95 Z=120")',
-      'desc'    => 'Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ',
-      'default'  => array(
-        'top'    => -61.42,
-        'right'  => -8.95,
-        'bottom' => 120,
-      ),
-      'class'     => 'panorama-readonly', 
-      'left'   => false,
-      'show_units' => false,
-      'top_icon'    => 'x',
-      'right_icon'  => 'y',
-      'bottom_icon' => 'z',
-      'dependency' => array(
-        array('initial_view', '==', '1'),
-        array('bppiv_type', 'any', 'image,gstreet'),
-      ),
-    ),
-    array(
-      'id'       => 'initial_view_video',
-      'type'     => 'switcher',
-      'title'    => 'Initial View',
-      'subtitle' => 'Choose Custom Angle of View for Initial Viewing ',
-      'desc'     => 'Enable or Disable Initial Viewe. Default "OFF"',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', 'any', 'video,video2' ),
-    ),
-    array(
-      'id'    => 'initial_view_video_property',
-      'type'  => 'spacing',
-      'title' => 'Initial Values',
-      'subtitle'=> 'Set The Custom values for Initial View. Default Initial Values are ("X=0 Y=0 Z=120")',
-      'desc'    => 'Set Your Desire Values. (X= Horizontal Position, Y= Vertical Position, Z= Zoom Level/Position) ',
-      'default'  => array(
-        'top'    => 0,
-        'right'  => 0,
-        'bottom' => 120,
-      ),
-      'class'     => 'panorama-readonly', 
-      'left'   => false,
-      'show_units' => false,
-      'top_icon'    => 'x',
-      'right_icon'  => 'y',
-      'bottom_icon' => 'z',
-      'dependency' => array( 'initial_view_video|bppiv_type', '==|any', '1|video,video2' ),
-    ),
-    array(
-      'id'       => 'custom_control',
-      'type'     => 'switcher',
-      'title'    => 'Custom Control',
-      'subtitle' => 'Custom Control will replace default control bar',
-      'desc'     => 'Show or Hide Custom Control. Default "NO"',
-      'class'     => 'panorama-readonly',  
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'dependency'   => array( 'bppiv_type', '==', 'image360' ),
-    ),
-     array(
-      'id'       => 'is_motion_button',
-      'type'     => 'switcher',
-      'title'    => 'Device Motion Button',
-      'subtitle' => 'Disable or Enable Device Motion Button',
-      'desc'     => 'Show or Hide Custom Control. Default "NO"',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', '==', 'image' ),
-    ),
-     array(
-      'id'         => 'motion_button_text_color',
-      'type'       => 'color',
-      'title'      => 'Device Motion Button Text Color',
-      'subtitle'   => 'You can use Custom Color',
-      'desc'       => 'Choose Device Motion  Button Text Color',
-      'default'    => '#fff',
-      'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
-    ),
-    array(
-      'id'         => 'motion_button_btn_bg',
-      'type'       => 'color',
-      'title'      => 'Device Motion Button Background Color',
-      'desc'       => 'Choose Device Motion Button Background Color',
-      'default'    => '#000000B3',
-     'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
-    ),
-    array(
-      'id'         => 'hover_motion_button_text_color',
-      'type'       => 'color',
-      'title'      => 'Device Motion Button Text Hover Color',
-      'subtitle'   => 'You can use Custom Color',
-      'desc'       => 'Choose Device Motion  Button Text Hover Color',
-      'default'    => '#fff',
-      'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
-    ),
-    array(
-      'id'         => 'hover_motion_button_btn_bg',
-      'type'       => 'color',
-      'title'      => 'Device Motion Button Background Hover Color',
-      'desc'       => 'Choose Device Motion Button Background Hover Color',
-      'default'    => '#000000E6',
-      'dependency'   => array( array('is_motion_button', '==', '1'),array('bppiv_type', '==', 'image') ),
-    ),
-    array(
-      'id'       => 'bppiv_auto_load',
-      'type'     => 'switcher',
-      'title'    => 'Auto Load',
-      'desc'     => 'Enable or Disable Autoload',
-      'subtitle'     => 'Image will be automatically load without click',
-      'class'     => 'panorama-readonly',  
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
-    ),
-    array(
-      'id'           => 'previewImgUrl',
-      'type'         => 'upload',
-      'library'      => 'image',
-      'button_title' => __('Upload Image', 'panorama-viewer'),
-      'title'        => __('Preview Image (Optional)', 'panorama-viewer'),
-      'desc'         => __('Shown before the panorama loads (especially useful when Autoload is OFF).', 'panorama-viewer'),
-      'dependency'   => array('bppiv_auto_load|bppiv_type', '==|any','0|image360,tour360'),
-      'class'     => 'panorama-readonly', 
-    ),
-    array(
-      'id'       => 'loadButtonText',
-      'type'     => 'text',
-      'title'    => __('Load Button Text', 'panorama-viewer'),
-      'desc'     => __("This text replaces the default 'Click to Load Panorama' button when Autoload is OFF", "panorama-viewer"),
-      'placeholder' => "Enter your load button text here",
-      'default' => "Click to Load Panorama",
-      'dependency'   => array('bppiv_auto_load|bppiv_type', '==|any','0|image360,tour360'),
-      'class'     => 'panorama-readonly',  
-    ),
-    array(
-      'id'       => 'draggable_360',
-      'type'     => 'switcher',
-      'title'    => 'Draggable ',
-      'desc'     => 'Enable or Disable mouse and touch dragging',
-      'subtitle'     => 'Image will be Draggable with this feature',
-      'class'     => 'panorama-readonly',  
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
-    ),
-    array(
-      'id'       => 'compass_360',
-      'type'     => 'switcher',
-      'title'    => 'Compass ',
-      'desc'     => 'Show or Hide Compass.',
-      'subtitle' => 'Enable or Disable Compass. Default "No"',
-      'class'     => 'panorama-readonly',  
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
-    ),
-    array(
-      'id'       => 'bppiv_auto_play',
-      'type'     => 'switcher',
-      'title'    => 'Auto Play',
-      'desc'     => 'To enable autoplay, please make sure "Muted" is also turned on.',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'dependency'   => array( 'bppiv_type', '==', 'video' ),
-    ),
-    array(
-      'id'       => 'bppiv_video_mute',
-      'type'     => 'switcher',
-      'title'    => 'Video Mute',
-      'subtitle' => 'Enable or Disable Video Mute',
-      'desc'     => 'Specify if the video should auto play',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'dependency'   => array( 'bppiv_type', '==', 'video' ),
-    ),
-    array(
-      'id'       => 'bppiv_video_autoplay',
-      'type'     => 'switcher',
-      'title'    => 'Video Auto Play',
-      'desc'     => 'Enable or Disable Video Auto Play',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', '==', 'video2' ),
-    ),
-    array(
-      'id'       => 'bppiv_video_loop',
-      'type'     => 'switcher',
-      'title'    => 'Video Loop',
-      'desc'     => 'Enable or Disable Video Loop',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', 'any', 'video,video2' ),
-    ),
-    array(
-      'id'       => 'control_show_hide_video',
-      'type'     => 'switcher',
-      'title'    => 'Control Bar',
-      'desc'     => 'Choose "No" to Hide Control. Default "Yes"',
-      'desc'     => 'Show or Hide Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', '==', 'video' ),
-    ),
-    array(
-      'id'       => 'video_fullscreen_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Fullscreen Control',
-      'desc'     => 'Show or Hide Fullscreene Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 
-        array('control_show_hide_video', '==', '1'),
-        array('bppiv_type', '==', 'video')
-      ),
-    ),
-     array(
-      'id'       => 'video_setting_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Setting Control',
-      'desc'     => 'Show or Hide Setting Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( array('control_show_hide_video', '==', '1') ,array('bppiv_type', '==', 'video') ),
-    ),
-    array(
-      'id'       => 'video_video_range_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Video Range & Play/Pause Control',
-      'desc'     => 'Show or Hide Video Range & Play/Pause Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( array('control_show_hide_video', '==', '1') ,array('bppiv_type', '==', 'video') ),
-    ),
-    array(
-      'id'       => 'video_play_pause_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Video  Play/Pause Control',
-      'desc'     => 'Show or Hide Video Play/Pause Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => true,
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2') 
-      ),
-    ),
-    array(
-      'id'       => 'video_progress_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Progress Control',
-      'desc'     => 'Show or Hide Progress Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2') 
-      ),
-    ),
-    array(
-      'id'       => 'video_volume_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Volume Control',
-      'desc'     => 'Show or Hide Volume Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => true,
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2') 
-      ),
-    ),
-    array(
-      'id'       => 'video2_fullscreen_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Fullscreen Control',
-      'desc'     => 'Show or Hide Fullscreene Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2')
-      ),
-    ),
-    array(
-      'id'       => 'video_remaining_time_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Remaining Time Control',
-      'desc'     => 'Show or Hide Remaining Time Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2') 
-      ),
-    ),
-    array(
-      'id'       => 'video_pip_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Picture in Picture Control',
-      'desc'     => 'Show or Hide Picture in Picture Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2') 
-      ),
-    ),
-    array(
-      'id'       => 'video_playback_speed_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Playback Speed Control',
-      'desc'     => 'Show or Hide Playback Speed Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No', 
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 
-        array('bppiv_type', '==', 'video2') 
-      ),
-    ),
-    array(
-      'id'       => 'title_author',
-      'type'     => 'switcher',
-      'title'    => 'Title & Author',
-      'subtitle' => 'Display Title & Author Text. Default "No"',
-      'desc'     => 'Show or Hide Title, Author Name',
-      'class'     => 'panorama-readonly',  
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'dependency'   => array( 'bppiv_type', '==', 'image360' ),
-    ),
-    array(
-      'id'       => 'title_360',
-      'type'     => 'text',
-      'title'    => 'Title',
-      'subtitle' => 'Display Title Text.',
-      'desc'     => 'Input Title Text',
-      'class'     => 'panorama-readonly',  
-      'placeholder' => "360° Image",
-      'default' => "360° Panorama",
-      'dependency'   => array( 'bppiv_type|title_author', '==|==', 'image360|1' ),
-    ),
-    array(
-      'id'       => 'author_360',
-      'type'     => 'text',
-      'title'    => 'Author',
-      'subtitle' => 'Display Author Name.',
-      'desc'     => 'Input Author Name',
-      'placeholder' => "bPlugins",
-      'default' => '<a href="https://bplugins.com/">bPlugins</a>',
-      'class'     => 'panorama-readonly',  
-      'dependency'   => array( 'bppiv_type|title_author', '==|==', 'image360|1' ),
-    ),
-    array(
-      'id'        => 'showByPrefix',
-      'type'      => 'switcher',
-      'title'     => '“by” Prefix',
-      'subtitle'  => 'Show or Hide the “by” text before the author name.',
-      'desc'      => 'Enable to show “by” before the author (e.g., by Alex Doe). Disable to hide it. Default is "Show".',
-      'text_on'   => 'Yes',
-      'text_off'  => 'No',
-      'default'   => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'=> array(
-          array( 'bppiv_type', '==', 'image360' ),
-          array( 'title_author', '==', '1' ),
-          array( 'author_360', '!=', '' ),
-      ),
-  ),
-  
-  // Option 2: bppiv_type = tour360
-  array(
-      'id'        => 'tourShowByPrefix',
-      'type'      => 'switcher',
-      'title'     => '“by” Prefix',
-      'subtitle'  => 'Show or Hide the “by” text before the author name.',
-      'desc'      => 'Enable to show “by” before the author (e.g., by Alex Doe). Disable to hide it. Default is "Show".',
-      'text_on'   => 'Yes',
-      'text_off'  => 'No',
-      'default'   => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'=> array(
-          array( 'bppiv_type', '==', 'tour360' ),
-          array( 'tourTitleAuthor', '==', '1' ),
-          array( 'author', '!=', '' ),
-      ),
-  ),
-    array(
-      'id'       => 'mouse_zoom',
-      'type'     => 'switcher',
-      'title'    => 'Mouse Zoom',
-      'subtitle' => 'Disable/Enable Mouse Zoom. Default "Yes"',
-      'desc'     => 'Show or Hide Mouse Zoom',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
-    ),
-    array(
-      'id'       => 'disable_keyboard_ctrl',
-      'type'     => 'switcher',
-      'title'    => 'Disable Keyboard Control',
-      'subtitle' => 'Disable/Enable Keyboard Control. Default "No"',
-      'desc'     => 'Show or Hide Keyboard Control',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => false,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
-    ),
-    array(
-      'id'       => 'double_click_zoom',
-      'type'     => 'switcher',
-      'title'    => 'Double Click Zoom',
-      'subtitle' => 'Disable/Enable Double Click Zoom. Default "Yes"',
-      'desc'     => 'Show or Hide Double Click Zoom',
-      'text_on'  => 'Yes',
-      'text_off' => 'No',
-      'default'  => true,
-      'class'     => 'panorama-readonly', 
-      'dependency'   => array( 'bppiv_type', 'any', 'image360,tour360' ),
-    ),
-  )
-) );
+                    var $tabs = $('.csf-nav ul li');
+                    $tabs.show();
+                    
+                    // Finding tabs by their title text for 100% accuracy
+                    var $stylesTab = $tabs.filter(function() { return $(this).text().indexOf('Styles') !== -1; });
+                    var $controlsTab = $tabs.filter(function() { return $(this).text().indexOf('Rotation') !== -1; });
+                    var $dimensionsTab = $tabs.filter(function() { return $(this).text().indexOf('Dimensions') !== -1; });
 
+                    if (type === 'video' || type === 'video2') {
+                        $stylesTab.hide();
+                    } else if (type === 'gstreet') {
+                        $stylesTab.hide();
+                    } else if (type === 'image') {
+                    } else if (type === 'image360') {
+                        $stylesTab.hide();
+                    } else if (type === 'gallery') {
+                        $controlsTab.hide();
+                        $dimensionsTab.hide();
+                    } else if (type === 'tour360') {
+                        $stylesTab.hide();
+                    }
+                  }
+                  $(document).on('change', 'input[name="_bppivimages_[bppiv_type]"]', syncTabs);
+                  // Repeat check to ensure UI is ready
+                  setTimeout(syncTabs, 300);
+                  setTimeout(syncTabs, 1000);
+                });
+              </script>
+              <?php
+            }
+          ),
+          array(
+            'id'           => 'bppiv_content',
+            'type'         => 'content',
+            'title'        => ' ',
+            'content'         => __('We have a new 360° Virtual Tour Viewer. <a href="edit.php?post_type=virtual_tour">click here</a> to create', 'panorama'),
+            'dependency'   => array( 'bppiv_type', '==', 'tour360' ),
+          ),
+          // --- CONTENT SOURCE ---
+          array(
+            'id'           => 'bppiv_image_src',
+            'type'         => 'media',
+            'library'      => 'image',
+            'title'        => 'Image Source',
+            'desc'         => 'Upload your 360° panoramic image here.',
+            'dependency'   => array( 'bppiv_type', '==', 'image' ),
+          ),
+          array(
+            'id'           => 'image_src_360',
+            'type'         => 'upload',
+            'library'      => 'image',
+            'title'        => 'Image Source.',
+            'desc'         => 'Upload your 360° panoramic image here.',
+            'dependency'   => array( 'bppiv_type', '==', 'image360' ),
+          ),
+          array(
+            'id'           => 'bppiv_video_src',
+            'type'         => 'media',
+            'library'      => 'video',
+            'title'        => 'Video Source.',
+            'desc'         => 'Upload your 360° panoramic video here.',
+            'dependency'   => array( 'bppiv_type', 'any', 'video,video2' ),
+          ),
 
-function bppiv_exclude_fields_before_save( $data ) {
+           array(
+            'id'           => 'bppiv_pano_id',
+            'type'         => 'text',
+            'title'        => __('Panorama ID', 'panorama'),
+            'desc' => __('Input here Google Street View Panorama Id. <a href="#" class="pano-help-link">How to find it?</a>', 'panorama'),
+            'placeholder'  => 'Paste panorama ID here',
+            'dependency'   => array('bppiv_type', '==', 'gstreet'),
+          ),
+          
+          $this->pro_feature_list( array(
+            'Multi-item Gallery'      => 'Display multiple panoramic scenes or videos in a single unified grid.',
+            'Custom Layout & Columns' => 'Control gallery limits, grid columns, and column spacing layout.',
+            'AJAX Load More'          => 'Enable smooth asynchronous loading for items in your gallery.',
+          ), array( 'bppiv_type', '==', 'gallery' ) ),
 
-$exclude = array(
-  'bppiv_pan_gallery',
-  'bppiv_gallery_limit',
-  'loadMore_btn_text',
-  'loadMore_text_color',
-  'loadMore_btn_bg',
-  'loadMore_hover_bg',
-  'bppiv_pano_id',
+          $this->pro_feature_list( array(
+            'Virtual Tour Creation'    => 'Create immersive virtual tours by connecting multiple 360° scenes.',
+            'Interactive Hotspots'     => 'Add clickable hotspots to navigate between different panoramic locations.',
+            'Custom Scene Management'  => 'Set custom titles, authors, and initial views for each scene in your tour.',
+            'Seamless Navigation'      => 'Provide a smooth transition experience as users move between scenes.',
+            'Advanced Controls'        => 'Enable compass, zoom, and orientation features for a better tour experience.',
+          ), array( 'bppiv_type', '==', 'tour360' ) )
+        )
+      ) );
+    }
 
-);
+   public function styles() {
+      CSF::createSection( $this->prefix, array(
+        'title'  => 'Styles' . $this->get_pro_badge(),
+        'icon'   => 'fa fa-paint-brush',
+        'fields' => array(
+          array(
+            'type'    => 'content',
+            'content' => $this->pro_feature_html( array(
+              'Device Motion'    => 'Enable motion/gyroscope navigation for mobile.',
+              'Custom UI Colors' => 'Full control over button colors and hover effects.',
+            ) ),
+            'class'   => 'bppiv-styles-image3d',
+          ),
 
-foreach ( $exclude as $id ) {
-unset( $data[$id] );
+          array(
+            'type'    => 'content',
+            'content' => $this->pro_feature_html( array(
+              'Load More Button Text'  => 'Customize the typography and custom text on the action button.',
+              'Load More Text Color'   => 'Full control over text color settings matching your layout.',
+              'Button Background'      => 'Apply custom button background colors to fit your brand.',
+              'Hover Background Color' => 'Animate and change background colors on button hover states.',
+            ) ),
+            'class'   => 'bppiv-styles-gallery',
+          ),
+
+          array(
+            'type'     => 'callback',
+            'function' => function() {
+              ?>
+              <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                  function syncStylesTab() {
+                    var type = $('input[name="_bppivimages_[bppiv_type]"]:checked').val();
+                    if(!type) return;
+
+                    $('.bppiv-styles-image3d, .bppiv-styles-gallery').hide();
+
+                    if (type === 'gallery') {
+                      $('.bppiv-styles-gallery').show();
+                    } else {
+                      $('.bppiv-styles-image3d').show();
+                    }
+                  }
+                  
+                  $(document).on('change', 'input[name="_bppivimages_[bppiv_type]"]', syncStylesTab);
+                  
+                  setTimeout(syncStylesTab, 300);
+                  setTimeout(syncStylesTab, 1000);
+                });
+              </script>
+              <?php
+            }
+          ),
+        )
+      ) );
+    }
+
+    public function controls() {
+      CSF::createSection( $this->prefix, array(
+        'title'  => 'Rotation & Controls',
+        'icon'   => 'fa fa-sliders',
+        'fields' => array(
+          // --- Image/360 fields (hidden for video via CSS class) ---
+          array(
+            'id'       => 'bppiv_auto_rotate',
+            'type'     => 'switcher',
+            'title'    => 'Auto Rotate',
+            'desc'     => 'Enable this to make the panorama rotate automatically when loaded.',
+            'default'  => true,
+            'class'    => 'bppiv-ctrl-image',
+          ),
+          array(
+            'id'       => 'bppiv_speed',
+            'type'     => 'spinner',
+            'title'    => 'Auto Rotate Speed',
+            'desc'     => 'Set the speed of rotation. Higher values mean faster rotation.',
+            'default'  => 2.0,
+            'dependency' => array( 'bppiv_auto_rotate', '==', 'true' ),
+            'class'    => 'bppiv-ctrl-image',
+          ),
+          array(
+            'id'       => 'control_show_hide',
+            'type'     => 'switcher',
+            'title'    => 'Hide Default Control',
+            'desc'     => 'Turn this on to hide the built-in navigation and zoom buttons.',
+            'default'  => false,
+            'class'    => 'bppiv-ctrl-image',
+          ),
+          // --- Video only fields ---
+          array(
+            'id'       => 'bppiv_auto_play',
+            'type'     => 'switcher',
+            'title'    => 'Auto Play',
+            'desc'     => 'Automatically start playing the video. Note: Most browsers require "Muted" for this to work.',
+            'default'  => false,
+            'class'    => 'bppiv-ctrl-video-only',
+          ),
+          array(
+            'id'       => 'bppiv_video_mute',
+            'type'     => 'switcher',
+            'title'    => 'Video Mute',
+            'desc'     => 'Mute the video audio by default. Recommended for autoplay compatibility.',
+            'class'    => 'bppiv-ctrl-video-only',
+          ),
+          // --- Shared field (video & video2) ---
+          array(
+            'id'       => 'bppiv_video_loop',
+            'type'     => 'switcher',
+            'title'    => 'Video Loop',
+            'desc'     => 'Restart the video automatically once it reaches the end.',
+            'default'  => true,
+            'class'    => 'bppiv-ctrl-video',
+          ),
+          array(
+            'id'       => 'control_show_hide_video',
+            'type'     => 'switcher',
+            'title'    => 'Control Bar',
+            'desc'     => 'Toggle the visibility of the video playback control bar.',
+            'default'  => true,
+            'class'    => 'bppiv-ctrl-video-only',
+          ),
+          // --- Video2 only free fields ---
+          array(
+            'id'       => 'bppiv_video_autoplay',
+            'type'     => 'switcher',
+            'title'    => 'Auto Play',
+            'desc'     => 'Enable or disable video auto play. Muting the video is often required for this.',
+            'default'  => true,
+            'class'    => 'bppiv-ctrl-video2',
+          ),
+          array(
+            'id'       => 'video_play_pause_ctrl',
+            'type'     => 'switcher',
+            'title'    => 'Play/Pause Control',
+            'desc'     => 'Toggle the visibility of the play and pause buttons on the player.',
+            'default'  => true,
+            'class'    => 'bppiv-ctrl-video2',
+          ),
+          array(
+            'id'       => 'video_volume_ctrl',
+            'type'     => 'switcher',
+            'title'    => 'Volume Control',
+            'desc'     => 'Show or hide the volume adjustment slider.',
+            'default'  => true,
+            'class'    => 'bppiv-ctrl-video2',
+          ),
+
+           // Pro features for Image 3D
+           array(
+             'type'    => 'content',
+             'content' => $this->pro_feature_html( array(
+               'Custom Start Position' => 'Choose exactly where viewers begin exploring your panorama.',
+               'Smart Auto-Rotation'   => 'Fine-tune the delay before rotation resumes after user interaction.',
+             ) ),
+             'class'   => 'bppiv-pro-image3d',
+           ),
+           // Pro features for Image 360 
+           array(
+             'type'    => 'content',
+             'content' => $this->pro_feature_html( array(
+               'Custom Start Position' => 'Choose exactly where viewers begin exploring your panorama.',
+               'Smart Auto-Rotation'   => 'Fine-tune the delay before rotation resumes after user interaction.',
+               'Custom Control Bar'    => 'Replace the default controls with a fully customizable control bar.',
+               'Instant Auto Load'     => 'Load the panorama automatically without requiring a click to start.',
+               'Touch & Drag'          => 'Allow users to explore by dragging with mouse or touch gestures.',
+               'Navigation Compass'    => 'Display an interactive compass to help users orient themselves.',
+               'Title & Author Overlay' => 'Show a professional title and author credit over the panorama.',
+               'Scroll Zoom'           => 'Let users zoom in and out using their mouse scroll wheel.',
+               'Keyboard Navigation'   => 'Navigate the panorama using keyboard arrow keys for accessibility.',
+               'Double-Click Zoom'     => 'Quickly zoom into a specific area with a double-click.',
+             ) ),
+             'class'   => 'bppiv-pro-image360',
+           ),
+           // Pro features for Video (normal)
+           array(
+             'type'    => 'content',
+             'content' => $this->pro_feature_html( array(
+               'Custom Start Angle'       => 'Define exactly where your video begins playing.',
+               'Fullscreen Toggle'        => 'Let viewers enjoy an immersive fullscreen video experience.',
+               'Playback Settings Panel'  => 'Give users control over quality, speed, and playback options.',
+               'Seek Bar & Play/Pause'    => 'Navigate through the video timeline with a sleek progress bar.',
+             ) ),
+             'class'   => 'bppiv-pro-video',
+           ),
+           // Pro features for Video 360 (only actual pro fields)
+           array(
+             'type'    => 'content',
+             'content' => $this->pro_feature_html( array(
+               'Custom Start Angle'    => 'Define exactly where your 360° video begins playing.',
+               'Progress Bar'          => 'Show or hide the video seek/progress bar.',
+               'Fullscreen Toggle'     => 'Allow viewers to enter immersive fullscreen mode.',
+               'Remaining Time'        => 'Display the remaining playback time on the player.',
+               'Picture in Picture'    => 'Enable floating mini-player for multitasking.',
+               'Playback Speed'        => 'Let viewers adjust video playback speed.',
+             ) ),
+             'class'   => 'bppiv-pro-video2',
+           ),
+           // JS to toggle fields and pro lists based on type
+           array(
+             'type'     => 'callback',
+             'function' => function() {
+               ?>
+               <script type="text/javascript">
+                 jQuery(document).ready(function($) {
+                   function syncControlsTab() {
+                     var type = $('input[name="_bppivimages_[bppiv_type]"]:checked').val();
+                     if(!type) return;
+                     // Hide all groups first
+                     $('.bppiv-ctrl-image, .bppiv-ctrl-video, .bppiv-ctrl-video-only, .bppiv-ctrl-video2').hide();
+                     $('.bppiv-pro-image3d, .bppiv-pro-image360, .bppiv-pro-video, .bppiv-pro-video2').hide();
+
+                     if (type === 'image') {
+                       $('.bppiv-ctrl-image').show();
+                       $('.bppiv-pro-image3d').show();
+                     } else if (type === 'image360' || type === 'tour360' || type === 'gstreet') {
+                       $('.bppiv-ctrl-image').show();
+                       $('.bppiv-pro-image360').show();
+                     } else if (type === 'video') {
+                       $('.bppiv-ctrl-video').show();
+                       $('.bppiv-ctrl-video-only').show();
+                       $('.bppiv-pro-video').show();
+                     } else if (type === 'video2') {
+                       $('.bppiv-ctrl-video').show();
+                       $('.bppiv-ctrl-video2').show();
+                       $('.bppiv-pro-video2').show();
+                     }
+                   }
+                   $(document).on('change', 'input[name="_bppivimages_[bppiv_type]"]', syncControlsTab);
+                   setTimeout(syncControlsTab, 300);
+                   setTimeout(syncControlsTab, 1000);
+                 });
+               </script>
+               <?php
+             }
+           ),
+        )
+      ) );
+    }
+
+    public function dymensions() {
+      CSF::createSection( $this->prefix, array(
+        'title'  => 'Dimensions',
+        'icon'   => 'fa fa-expand',
+        'fields' => array(
+           // --- DIMENSIONS ---
+          array(
+            'id'       => 'bppiv_image_width',
+            'type'         => 'dimensions',
+            'title'        => 'Width',
+            'desc'         => 'Set the width of the viewer (e.g., 100% or 800px).',
+            'default'      => array( 'width'  => '100', 'unit'   => '%' ),
+            'height'       => false
+          ),
+          array(
+            'id'           => 'bppiv_image_height',
+            'type'         => 'dimensions',
+            'title'        => 'Height',
+            'desc'         => 'Set the fixed height of the viewer in pixels.',
+            'default'      => array( 'height' => '320', 'unit'   => 'px' ),
+            'width'        => false,
+            'class'        => 'bppiv-dim-height',
+          ),
+          array(
+            'id'       => 'bppiv_alignment',
+            'type'     => 'select',
+            'title'    => 'Viewer Alignment',
+            'desc'     => 'Align the viewer container to the left, center, or right of the page.',
+            'options'  => array( 'start' => 'Left', 'center' => 'Center', 'end' => 'Right' ),
+            'default'  => 'center'
+          ),
+          // JS to hide height for video2
+          array(
+            'type'     => 'callback',
+            'function' => function() {
+              ?>
+              <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                  function syncDimensions() {
+                    var type = $('input[name="_bppivimages_[bppiv_type]"]:checked').val();
+                    if(!type) return;
+                    if (type === 'video2') {
+                      $('.bppiv-dim-height').hide();
+                    } else {
+                      $('.bppiv-dim-height').show();
+                    }
+                  }
+                  $(document).on('change', 'input[name="_bppivimages_[bppiv_type]"]', syncDimensions);
+                  setTimeout(syncDimensions, 300);
+                  setTimeout(syncDimensions, 1000);
+                });
+              </script>
+              <?php
+            }
+          ),
+        )
+      ) );
+    }
+
+    // public function upcoming_section($title) {
+    //   CSF::createSection( $this->prefix, array(
+    //     'title' => $title . $this->get_upcoming_badge(),
+    //     'fields' => array(
+    //       array(
+    //         'type' => 'content',
+    //         'content' => '
+    //           <div style="text-align:center; padding: 40px 20px; background: #f9f9f9; border: 1px dashed #ccc; border-radius: 12px;">
+    //             <h3 style="color:#146ef5; margin-bottom:10px;">🚀 Coming Soon</h3>
+    //             <p style="color:#666;">We are working hard to bring <strong>' . $title . '</strong> features.</p>
+    //           </div>
+    //         ',
+    //       ),
+    //     ),
+    //   ) );
+    // }
+
+    public function pro_feature_html( $features ) {
+      $html = '
+      <div class="bppiv-pro-notice-box" style="margin-top: 30px; padding: 25px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+          <h4 class="bppiv-pro-notice-title" style="margin: 0 0 20px 0; color: #146ef5; font-size: 18px; display: flex; align-items: center; gap: 10px;">
+              <span>🚀</span> ' . __( 'Unlock Pro Features', 'panorama' ) . '
+          </h4>
+          <ul class="bppiv-pro-notice-list" style="list-style: none; padding: 0; margin: 0 0 25px 0; display: grid; grid-template-columns: repeat(1, 1fr); gap: 15px;">';
+      foreach ( $features as $title => $desc ) {
+        $html .= '
+              <li style="font-size: 14px; line-height: 1.5; color: #4a5568; display: flex; align-items: baseline; gap: 10px;">
+                  <span style="color: #146ef5; font-weight: bold; font-size: 12px;">✔</span>
+                  <div>
+                    <strong style="color: #2d3748;">' . esc_html( $title ) . ':</strong> 
+                    <span style="color: #718096; font-size: 13px;">' . esc_html( $desc ) . '</span>
+                  </div>
+              </li>';
+      }
+      $html .= '
+          </ul>
+          <div style="display: flex; align-items: center; gap: 15px; border-top: 1px solid #edf2f7; padding-top: 20px;">
+              <a href="' . admin_url( 'admin.php?page=panorama-viewer-help-demo#/pricing' ) . '" target="_blank" style="background: #146ef5; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">' . __( 'Upgrade to Pro Now', 'panorama' ) . '</a>
+          </div>
+      </div>';
+      return $html;
+    }
+
+    public function pro_feature_list( $features, $dependency = array() ) {
+      $html = '
+      <div class="bppiv-pro-notice-box" style="margin-top: 30px; padding: 25px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+          <h4 class="bppiv-pro-notice-title" style="margin: 0 0 20px 0; color: #146ef5; font-size: 18px; display: flex; align-items: center; gap: 10px;">
+              <span>🚀</span> ' . __( 'Unlock Pro Features', 'panorama' ) . '
+          </h4>
+          <ul class="bppiv-pro-notice-list" style="list-style: none; padding: 0; margin: 0 0 25px 0; display: grid; grid-template-columns: repeat(1, 1fr); gap: 15px;">';
+      foreach ( $features as $title => $desc ) {
+        $html .= '
+              <li style="font-size: 14px; line-height: 1.5; color: #4a5568; display: flex; align-items: baseline; gap: 10px;">
+                  <span style="color: #146ef5; font-weight: bold; font-size: 12px;">✔</span>
+                  <div>
+                    <strong style="color: #2d3748;">' . esc_html( $title ) . ':</strong> 
+                    <span style="color: #718096; font-size: 13px;">' . esc_html( $desc ) . '</span>
+                  </div>
+              </li>';
+      }
+      $html .= '
+          </ul>
+          <div style="display: flex; align-items: center; gap: 15px; border-top: 1px solid #edf2f7; padding-top: 20px;">
+              <a href="' . admin_url( 'admin.php?page=panorama-viewer-help-demo#/pricing' ) . '" target="_blank" style="background: #146ef5; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">' . __( 'Upgrade to Pro Now', 'panorama' ) . '</a>
+          </div>
+      </div>';
+      $field = array( 'type' => 'content', 'content' => $html );
+      if ( ! empty( $dependency ) ) { $field['dependency'] = $dependency; }
+      return $field;
+    }
+
+    public function exclude_fields_before_save( $data ) {
+      $exclude = array( 'bppiv_pan_gallery', 'bppiv_gallery_limit', 'bppiv_pano_id', 'auto_rotate_inactivity_delay', 'is_motion_button', 'initial_view', 'custom_control' );
+      foreach ( $exclude as $id ) { if(isset($data[$id])) { unset( $data[ $id ] ); } }
+      return $data;
+    }
+  }
+
+  $bppiv_metabox = new BPPIV_MetaBox();
+  $bppiv_metabox->init();
 }
-
-return $data;
-
-}
-
-add_filter( 'csf_sc__save', 'bppiv_exclude_fields_before_save', 10, 1 );

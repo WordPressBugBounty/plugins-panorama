@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       const panoramaViewer = new PANOLENS.Viewer({
-        container: container,
+        container,
         controlBar: Boolean(parseInt(video_show_controls)),
       });
       panoramaViewer.add(panoramaVideo);
