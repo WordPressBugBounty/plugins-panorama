@@ -130,6 +130,27 @@ if ( !class_exists( 'PSBPlugin' ) ) {
 			wp_add_inline_style( 'psb-inline-style', $inline_styles );
 		}
 
+		function psb_sanitize_blocks_meta_recursive( $value, $key = '' ) {
+			if ( is_array( $value ) ) {
+				foreach ( $value as $sub_key => $sub_value ) {
+					$value[ $sub_key ] = $this->psb_sanitize_blocks_meta_recursive( $sub_value, $sub_key );
+				}
+				return $value;
+			}
+
+			if ( is_string( $value ) ) {
+				if ( $key === 'globalIcon' || $key === 'icon' ) {
+					return $value; // Preserve custom SVG icons with their original casing (e.g. viewBox, linearGradient)
+				} elseif ( $key === 'description' ) {
+					return wp_kses_post( $value );
+				} else {
+					return sanitize_text_field( $value );
+				}
+			}
+
+			return $value;
+		}
+
 		function save_product_spot_meta( $post_id, $post ) {
             if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 
@@ -141,7 +162,14 @@ if ( !class_exists( 'PSBPlugin' ) ) {
             if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
             if ( isset( $_POST['product_spot_blocks'] ) ) {
-                update_post_meta( $post_id, '_product_spot_blocks', wp_kses_post( wp_unslash( $_POST['product_spot_blocks'] ) ) );
+				$blocks_json = wp_unslash( $_POST['product_spot_blocks'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON decoded and each value sanitized below.
+
+				$blocks = json_decode($blocks_json, true);
+				if (is_array($blocks)) {
+					$blocks = $this->psb_sanitize_blocks_meta_recursive($blocks);
+					$blocks_json = wp_json_encode($blocks);
+				}
+                update_post_meta( $post_id, '_product_spot_blocks', $blocks_json );
             }
 
             if ( isset( $_POST['position'] ) ) {
@@ -172,18 +200,7 @@ if ( !class_exists( 'PSBPlugin' ) ) {
                 wp_send_json_error( array( 'message' => __( 'Blocks data is not valid JSON', 'panorama' ) ) );
             }
 
-            foreach ( $blocks as &$block ) {
-                if ( isset( $block['attrs'] ) && is_array( $block['attrs'] ) ) {
-                    foreach ( $block['attrs'] as $key => $value ) {
-                        if ( is_string( $value ) ) {
-                            $block['attrs'][ $key ] = sanitize_text_field( $value );
-                        }
-                        if ( in_array( $key, array( 'content', 'description', 'html' ), true ) ) {
-                            $block['attrs'][ $key ] = wp_kses_post( $value );
-                        }
-                    }
-                }
-            }
+            $blocks = $this->psb_sanitize_blocks_meta_recursive($blocks);
 
             $blocks_json = wp_json_encode( $blocks );
             $saved       = update_post_meta( $post_id, '_product_spot_blocks', $blocks_json );
@@ -193,7 +210,7 @@ if ( !class_exists( 'PSBPlugin' ) ) {
                 $savedPos = update_post_meta( $post_id, '_product_spot_position', $position );
             }
 
-            if ( $saved || $savedPos ) {
+            if ( $saved || $savedPos || get_post_meta( $post_id, '_product_spot_blocks', true ) === $blocks_json ) {
                 wp_send_json_success( array(
                     'message'    => __( 'Saved successfully!', 'panorama' ),
                     'attributes' => $blocks,
@@ -217,6 +234,7 @@ if ( !class_exists( 'PSBPlugin' ) ) {
 		function psb_block_editor_display($post) {
 			$saved_blocks = get_post_meta($post->ID, '_product_spot_blocks', true);
 			$spotPosition = get_post_meta($post->ID, '_product_spot_position', true);
+			wp_nonce_field( 'psb_save_meta_' . $post->ID, 'psb_meta_nonce' );
 
 			?>
 			<div 
