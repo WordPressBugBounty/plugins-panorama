@@ -11,6 +11,32 @@ class EnqueueAssets{
         add_action('enqueue_block_assets', [$this, 'bppiv_registerFrontEndAssets']);
         add_action('admin_enqueue_scripts', [$this, 'bppiv_registerBackendAssets']);
         add_action('admin_enqueue_scripts', [$this, 'bppiv_registerFrontEndAssets']);
+        add_action('admin_enqueue_scripts', [$this, 'printAnalyticsEditorData'], 1);
+        add_action('enqueue_block_editor_assets', [$this, 'printAnalyticsEditorData'], 1);
+        add_action('wp_head', [$this, 'printAnalyticsFrontendData'], 1);
+    }
+
+    public function printAnalyticsEditorData() {
+        $analytics_data = [
+            'endpoint'   => esc_url_raw(rest_url('bppiv/v1/track-analytics')),
+            'enabled'    => true,
+            'isWcActive' => class_exists('WooCommerce'),
+        ];
+        wp_register_script('bppiv-editor-analytics-data', '', [], BPPIV_VERSION, false);
+        wp_enqueue_script('bppiv-editor-analytics-data');
+        wp_add_inline_script('bppiv-editor-analytics-data', 'window.bppivAnalyticsData = ' . wp_json_encode($analytics_data) . '; window.bppivEditorData = ' . wp_json_encode($analytics_data) . ';', 'before');
+    }
+
+    public function printAnalyticsFrontendData() {
+        if (is_admin()) {
+            return;
+        }
+        $analytics_data = [
+            'endpoint'   => esc_url_raw(rest_url('bppiv/v1/track-analytics')),
+            'enabled'    => true,
+            'isWcActive' => class_exists('WooCommerce'),
+        ];
+        echo "<script id='bppiv-analytics-data-js'>window.bppivAnalyticsData = " . wp_json_encode($analytics_data) . ";</script>\n";
     }
 
     public function bppiv_registerFrontEndAssets(){
@@ -26,7 +52,7 @@ class EnqueueAssets{
         
         
         //Pannellum
-        wp_register_script( 'bppiv-pannellum-js', BPPIV_PLUGIN_DIR . 'public/assets/js/library/pannellum.js', [], BPPIV_VERSION, true);
+        wp_register_script( 'bppiv-pannellum-js', BPPIV_PLUGIN_DIR . 'public/assets/js/library/pannellum.js', [], file_exists(BPPIV_PATH . 'public/assets/js/library/pannellum.js') ? filemtime(BPPIV_PATH . 'public/assets/js/library/pannellum.js') : BPPIV_VERSION, true);
         wp_register_script( 'bppiv-init', BPPIV_PLUGIN_DIR . 'build/scripts.js', array( 'jquery', 'bppiv-three', 'bppiv-panolens' ), BPPIV_VERSION, true );
 
         wp_register_script( 'bppiv-product', BPPIV_PLUGIN_DIR . 'public/assets/js/product.js', array(), BPPIV_VERSION, true );
@@ -38,13 +64,22 @@ class EnqueueAssets{
         // style
         wp_register_style( 'bppiv-font-material', 'https://fonts.googleapis.com/icon?family=Material+Icons', [], BPPIV_VERSION );
         wp_register_style( 'bppiv-main-style', BPPIV_PLUGIN_DIR . 'public/assets/css/style.css', [], BPPIV_VERSION );
+
+        $analytics_data = [
+            'endpoint' => esc_url_raw(rest_url('bppiv/v1/track-analytics')),
+            'enabled'  => true,
+        ];
+        $handles = ['bppiv-init', 'bppiv-product', 'panorama-virtual-tour-view-script', 'panorama-image-360-view-script', 'panorama-tour-view-script'];
+        foreach ($handles as $h) {
+            wp_localize_script($h, 'bppivAnalyticsData', $analytics_data);
+        }
     }
     
      public function bppiv_registerBackendAssets($screen){
         $current = function_exists('get_current_screen') ? get_current_screen() : null;
         $post_type = $current && isset($current->post_type) ? $current->post_type : '';
         $screen_id = $current && isset($current->id) ? $current->id : '';
-        $is_bppiv_screen = ($post_type === 'bppiv-image-viewer') || ($screen_id === 'bppiv-image-viewer_page_bppiv-support');
+        $is_bppiv_screen = ($post_type === 'bppiv-image-viewer') || ($post_type === 'product') || ($screen_id === 'bppiv-image-viewer_page_bppiv-support');
 
         if ( $is_bppiv_screen ) {
             wp_register_style( 'bppiv-custom-style', BPPIV_PLUGIN_DIR . 'public/assets/css/admin-style.css',[], BPPIV_VERSION );

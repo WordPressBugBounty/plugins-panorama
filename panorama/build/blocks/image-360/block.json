@@ -18,6 +18,33 @@
       "type": "string",
       "default": ""
     },
+    "panoramaFormat": {
+      "type": "string",
+      "default": "equirectangular"
+    },
+    "haov": {
+      "type": "number",
+      "default": 360
+    },
+    "vaov": {
+      "type": "number",
+      "default": 180
+    },
+    "vOffset": {
+      "type": "number",
+      "default": 0
+    },
+    "cubeMap": {
+      "type": "object",
+      "default": {
+        "front": "",
+        "right": "",
+        "back": "",
+        "left": "",
+        "up": "",
+        "down": ""
+      }
+    },
     "previewImgUrl": {
       "type": "string",
       "default": ""
@@ -42,6 +69,7 @@
         "autoLoad": true,
         "draggable": true,
         "compass": false,
+        "orientation": false,
         "titleAuthor": true,
         "title": "360° Image",
         "author": "bPlugins",
