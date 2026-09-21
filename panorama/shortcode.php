@@ -18,6 +18,16 @@ function bppiv_image_viewer( $atts ) {
     if ( 'bppiv-image-viewer' !== $post_type ) {
         return '';
     }
+
+    // Security Check: Password Protection, Post Status & Read Capability
+    if ( post_password_required( $id ) ) {
+        return '';
+    }
+
+    if ( 'publish' !== get_post_status( $id ) && ! current_user_can( 'read_post', $id ) ) {
+        return '';
+    }
+
     // Meta Data.
     $bppiv_meta = get_post_meta( $id, '_bppivimages_', true );
     if ( ! is_array( $bppiv_meta ) ) {

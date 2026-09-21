@@ -3,7 +3,7 @@ Contributors: bplugins, abuhayat, freemius, shamim10, farazi1
 Tags: panorama, 360 degree, 3d, virtual tour, krpano, 
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
@@ -174,6 +174,10 @@ e.g.
 8. Gallery
 
 == Changelog ==
+
+= 1.8.2 - 21 Sep, 2026 =
+* **Fixed:** Restricted the [panorama] shortcode from rendering unpublished, private, or password-protected panorama content to unauthorized users.
+* **Fixed:** Optimized JavaScript build output to comply with WordPress.org's automated code review requirements.
 
 = 1.8.1 - 20 Sep, 2026 =
 * **Improved:** Better compatibility with CDN and image-optimization plugins (Envira CDN, WP Rocket, Imagify, etc.) for panorama images and videos.
