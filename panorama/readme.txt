@@ -3,14 +3,14 @@ Contributors: bplugins, abuhayat, freemius, shamim10, farazi1
 Tags: panorama, 360 degree, 3d, virtual tour, krpano, 
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
-Panorama Viewer displays panoramic images/videos easily on your WordPress site. Supports various files like .png, .jpeg, .mp4, and more
+Panorama Viewer displays panoramic images/videos easily on your WordPress site. Supports various files like .png, .jpeg, .mp4, and more.
 
 == Description ==
 
@@ -174,6 +174,9 @@ e.g.
 8. Gallery
 
 == Changelog ==
+
+= 1.8.4 - 26 Oct, 2026 =
+* **Security:** Fixed a stored Cross-Site Scripting (XSS) issue in the Product Spot block (hotspot icons, titles and descriptions) and hardened attribute output and generated styles across all blocks.
 
 = 1.8.3 - 21 Sep, 2026 =
 * **Fixed:** Reworked how the Product Spot block's icon-picker data is bundled so the build output complies with WordPress.org's automated JavaScript review limits.
